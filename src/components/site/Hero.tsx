@@ -133,20 +133,35 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* oversized wordmark */}
-        <motion.div
-          initial={reduce ? false : { opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.5, ease: EASE }}
-          className="mt-20 md:mt-28"
-          aria-hidden
-        >
-          <p className="font-display pb-[0.12em] leading-[0.8] font-medium tracking-[-0.05em] text-[19vw] whitespace-nowrap">
-            Betterfly<span className="text-acid">.</span>
-          </p>
-
-        </motion.div>
       </div>
+
+      {/* oversized wordmark, edge to edge */}
+      <motion.div
+        initial={reduce ? false : { opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.2, delay: 0.5, ease: EASE }}
+        className="relative mt-20 w-full md:mt-28"
+        aria-hidden
+      >
+        <svg viewBox="0 0 1000 152" className="block w-full" preserveAspectRatio="xMidYMid meet">
+          <text
+            x="0"
+            y="118"
+            textLength="1000"
+            lengthAdjust="spacingAndGlyphs"
+            fill="var(--bone)"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "152px",
+              fontWeight: 500,
+            }}
+          >
+            Betterfly
+            <tspan fill="var(--acid)">.</tspan>
+          </text>
+        </svg>
+      </motion.div>
+
 
       {/* label row */}
       <div className="relative mt-8 border-t border-border">
