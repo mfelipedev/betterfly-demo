@@ -23,7 +23,10 @@ export function Hero() {
   const go = (step: number) => setI((prev) => (prev + step + FEATURED.length) % FEATURED.length);
 
   return (
-    <section id="inicio" className="relative overflow-hidden pt-32 md:pt-36">
+    <section
+      id="inicio"
+      className="relative flex min-h-svh flex-col overflow-hidden pt-28 md:pt-32"
+    >
       {/* acid light source, top-left, dissolving into ink */}
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_95%_at_0%_-10%,color-mix(in_oklab,var(--acid)_26%,transparent),transparent_58%)]"
