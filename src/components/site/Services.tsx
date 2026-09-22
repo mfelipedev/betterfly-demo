@@ -23,7 +23,7 @@ const SERVICES = [
   },
   {
     n: "04",
-    title: "Foto & vídeo",
+    title: "Audiovisual",
     lead: "Produção audiovisual própria, do roteiro à entrega final.",
     items: ["Direção e roteiro", "Captação em estúdio e locação", "Edição e finalização", "Bancos de conteúdo"],
   },
