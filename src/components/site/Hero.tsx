@@ -102,7 +102,6 @@ export function Hero() {
         aria-hidden
         width={1254}
         height={1254}
-        style={{ opacity: reduce ? 0.06 : undefined }}
         initial={reduce ? false : { opacity: 0, scale: 1.1 }}
         animate={{ opacity: 0.07, scale: 1 }}
         transition={{ duration: 1.6, ease: EASE }}
