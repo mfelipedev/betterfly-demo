@@ -56,14 +56,14 @@ function LoginPage() {
       </section>
 
       {/* Acesso */}
-      <section className="flex flex-col px-6 py-8 sm:px-12">
+      <section className="flex flex-col px-6 pt-8 pb-16 sm:px-12 lg:pb-8">
         <div className="flex items-center justify-between">
           <Link to="/" className="lg:hidden" aria-label="Voltar para o site">
             <img src={logo} alt="Betterfly" className="h-8 w-auto" />
           </Link>
           <span className="ml-auto inline-flex items-center gap-2 rounded-full border border-acid/30 px-3 py-1 text-[0.58rem] font-medium tracking-[0.22em] text-acid uppercase">
             <span className="signal-dot h-1.5 w-1.5 rounded-full bg-acid" />
-            Demo experience
+            Demo experience - MARCIO IA
           </span>
         </div>
 

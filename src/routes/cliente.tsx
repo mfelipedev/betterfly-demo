@@ -29,6 +29,7 @@ function ClienteLayout() {
       <Toaster
         theme="dark"
         position={isMobile ? "top-center" : "bottom-right"}
+        offset={{ bottom: 64 }}
         toastOptions={{
           classNames: {
             toast: "!bg-[oklch(0.17_0_0)] !border-border !text-bone !rounded-md",

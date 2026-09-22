@@ -509,7 +509,7 @@ function TopBar({ mode }: { mode: Mode }) {
         </Link>
         <span className="hidden items-center gap-2 rounded-full border border-acid/30 px-2.5 py-1 text-[0.58rem] font-medium tracking-[0.2em] text-acid uppercase sm:inline-flex">
           <span className="signal-dot h-1.5 w-1.5 rounded-full bg-acid" />
-          Demo experience
+          Demo experience - MARCIO IA
         </span>
       </div>
 
