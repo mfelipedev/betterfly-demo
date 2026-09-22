@@ -7,6 +7,7 @@ import { Audiovisual } from "@/components/site/Audiovisual";
 import { Process } from "@/components/site/Process";
 import { Cases } from "@/components/site/Cases";
 import { Experience } from "@/components/site/Experience";
+import { Origin } from "@/components/site/Origin";
 import { CTA } from "@/components/site/CTA";
 import { Footer } from "@/components/site/Footer";
 
@@ -40,6 +41,7 @@ function Index() {
         <Process />
         <Cases />
         <Experience />
+        <Origin />
         <CTA />
       </main>
       <Footer />
