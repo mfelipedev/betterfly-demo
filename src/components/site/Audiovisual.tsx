@@ -57,7 +57,7 @@ export function Audiovisual() {
             </motion.figure>
 
             <Reveal className="flex-1">
-              <div className="flex h-full flex-col justify-between gap-8 rounded-sm border border-border p-6 md:p-8">
+              <div className="flex flex-col gap-8 rounded-sm border border-border p-6 md:p-8">
                 <p className="leading-relaxed text-foreground/70">
                   Produção audiovisual é o coração da Betterfly. Planejamos o roteiro, dirigimos a
                   cena, captamos em estúdio ou em locação e entregamos material pronto para
