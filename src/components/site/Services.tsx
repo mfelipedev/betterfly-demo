@@ -43,7 +43,7 @@ export function Services() {
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <SectionLabel index="02">Serviços</SectionLabel>
+            <SectionLabel index="03">Serviços</SectionLabel>
             <h2 className="display-lg mt-8 max-w-[16ch]">Camadas de uma marca em movimento</h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-foreground/55">
