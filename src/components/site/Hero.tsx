@@ -7,7 +7,7 @@ import prod1 from "@/assets/prod-1.jpg";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-const FRENTES = ["Marketing", "Social media", "Tráfego pago", "Foto & vídeo", "Branding"];
+const FRENTES = ["Marketing", "Social media", "Tráfego pago", "Audiovisual", "Branding"];
 
 const FEATURED = [
   { src: case1, title: "Reposicionamento de marca", tag: "Branding" },
