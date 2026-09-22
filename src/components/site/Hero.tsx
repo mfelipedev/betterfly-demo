@@ -143,7 +143,7 @@ export function Hero() {
         className="relative mt-20 w-full md:mt-28"
         aria-hidden
       >
-        <svg viewBox="0 0 1000 152" className="block w-full" preserveAspectRatio="xMidYMid meet">
+        <svg viewBox="0 0 1000 205" className="block w-full" preserveAspectRatio="xMidYMid meet">
           <text
             x="0"
             y="118"
