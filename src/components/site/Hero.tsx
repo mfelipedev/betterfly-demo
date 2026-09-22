@@ -23,6 +23,7 @@ export function Hero() {
   const go = (step: number) => setI((prev) => (prev + step + FEATURED.length) % FEATURED.length);
 
   return (
+    <>
     <section
       id="inicio"
       className="relative flex min-h-svh flex-col overflow-hidden pt-28 md:pt-32"
