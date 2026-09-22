@@ -31,7 +31,7 @@ export function Manifesto() {
           <Reveal delay={0.1} className="md:col-span-4 md:col-start-7">
             <p className="leading-relaxed text-foreground/60">
               A Betterfly trabalha em ciclos de evolução. Cada mês a marca sai de um patamar e entra
-              em outro — com estética própria, narrativa clara e presença consistente nos lugares em
+              em outro, com estética própria, narrativa clara e presença consistente nos lugares em
               que decide estar.
             </p>
           </Reveal>
@@ -43,18 +43,18 @@ export function Manifesto() {
         </div>
       </div>
 
-      {/* A origem do nome — composição tipográfica */}
+      {/* A origem do nome, composicao tipográfica */}
       <div ref={ref} className="mx-auto mt-24 max-w-[1600px] px-5 md:mt-32 md:px-10">
         <div className="flex items-baseline justify-between border-t border-border pt-8">
           <p className="label-xs">A origem do nome</p>
           <motion.p style={{ opacity }} className="label-xs text-foreground/40">
-            2017 — hoje
+            2017 / hoje
           </motion.p>
         </div>
 
         <div className="mt-12 grid gap-10 md:mt-16 md:grid-cols-12 md:gap-8">
           <Reveal className="md:col-span-5">
-            <p className="label-xs text-foreground/40">01 — O começo</p>
+            <p className="label-xs text-foreground/40">01 / O começo</p>
             <h3 className="mt-4 font-display text-[clamp(1.75rem,3vw,2.75rem)] leading-[1.05] tracking-[-0.03em]">
               Nascemos como <span className="text-outline">Butterfly</span>, em 2017
             </h3>
@@ -92,12 +92,12 @@ export function Manifesto() {
 
         <Reveal delay={0.15}>
           <div className="mt-14 border-t border-border pt-10 md:mt-20">
-            <p className="label-xs text-foreground/40">04 — O que ficou</p>
+            <p className="label-xs text-foreground/40">04 / O que ficou</p>
             <p className="mt-5 max-w-[30ch] font-display text-[clamp(1.5rem,3.4vw,3rem)] leading-[1.06] tracking-[-0.03em] md:max-w-[34ch]">
               Ser o seu melhor voo no universo midiático.
             </p>
             <p className="mt-6 max-w-[46ch] leading-relaxed text-foreground/60">
-              Betterfly é a junção das duas palavras — e a promessa de que cada entrega deixe a marca
+              Betterfly é a junção das duas palavras, e a promessa de que cada entrega deixe a marca
               um patamar acima de onde começou.
             </p>
           </div>

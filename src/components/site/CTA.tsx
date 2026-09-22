@@ -39,7 +39,7 @@ export function CTA() {
           </span>
         </h2>
         <p className="mx-auto mt-8 max-w-xl leading-relaxed text-foreground/60">
-          Conte onde sua marca está hoje. Nós desenhamos o caminho para o patamar seguinte — com
+          Conte onde sua marca está hoje. Nós desenhamos o caminho para o patamar seguinte, com
           estratégia, produção e consistência.
         </p>
 

@@ -77,7 +77,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Betterfly — Branding, conteúdo & performance" },
+      { title: "Betterfly: Branding, conteúdo & performance" },
       {
         name: "description",
         content:
