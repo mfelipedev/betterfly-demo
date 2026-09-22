@@ -64,7 +64,7 @@ export function Origin() {
           <div className="mt-14 border-t border-border pt-10 md:mt-20">
             <p className="label-xs text-foreground/40">04 / O que ficou</p>
             <p className="mt-5 max-w-[30ch] font-display text-[clamp(1.5rem,3.4vw,3rem)] leading-[1.06] tracking-[-0.03em] md:max-w-[34ch]">
-              Ser o seu melhor voo no universo midiático.
+              Levar marcas a um novo patamar de presença, direção e resultado.
             </p>
             <p className="mt-6 max-w-[46ch] leading-relaxed text-foreground/60">
               Betterfly é a junção das duas palavras, e a promessa de que cada entrega deixe a marca
