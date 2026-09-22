@@ -146,7 +146,7 @@ export function Hero() {
         <svg viewBox="0 0 1000 205" className="block w-full" preserveAspectRatio="xMidYMid meet">
           <text
             x="0"
-            y="118"
+            y="159"
             textLength="1000"
             lengthAdjust="spacingAndGlyphs"
             fill="var(--bone)"
