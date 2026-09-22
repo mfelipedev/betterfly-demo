@@ -56,7 +56,7 @@ export function Manifesto() {
           <Reveal className="md:col-span-5">
             <p className="label-xs text-foreground/40">01 — O começo</p>
             <h3 className="mt-4 font-display text-[clamp(1.75rem,3vw,2.75rem)] leading-[1.05] tracking-[-0.03em]">
-              Nascemos <span className="text-outline">Butterfly</span>, em 2017.
+              Nascemos como <span className="text-outline">Butterfly</span>, em 2017
             </h3>
             <p className="mt-5 max-w-[38ch] leading-relaxed text-foreground/65">
               O nome vinha da metamorfose: marcas que chegavam de um jeito e saíam de outro. Com o
