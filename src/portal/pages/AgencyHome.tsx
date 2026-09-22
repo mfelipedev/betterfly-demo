@@ -241,7 +241,7 @@ function AiCard() {
             </p>
           </div>
         </div>
-        <Link to="/cliente/agencia/$secao" params={{ secao: "automacao" }} className={btn.subtle}>
+        <Link to="/cliente/agencia/automacao" className={btn.subtle}>
           Configurar
         </Link>
       </div>

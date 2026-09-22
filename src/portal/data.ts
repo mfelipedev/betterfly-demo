@@ -97,6 +97,8 @@ export interface Convo {
   summary?: string;
   topics: string[];
   pendingOffer?: boolean;
+  /** Última regra de transferência acionada pela IA. */
+  rule?: string | undefined;
   messages: Message[];
 }
 
@@ -109,6 +111,11 @@ export interface Client {
   owner: TeamId;
   approvals: number;
   changes: number;
+  contact: string;
+  since: string;
+  /** Conteúdos planejados e publicados no ciclo atual. */
+  planned: number;
+  published: number;
   nextDelivery: string;
   nextDeliveryLabel: string;
   services: string[];
@@ -124,11 +131,59 @@ export interface Activity {
 
 export interface AgendaEvent {
   id: string;
-  kind: "captacao" | "reuniao" | "entrega";
+  kind: "captacao" | "reuniao" | "entrega" | "publicacao";
   title: string;
   at: string;
+  /** Duração em minutos. */
+  duration: number;
   owner: TeamId;
   place: string;
+  clientId: string;
+  notes?: string;
+  contentId?: string;
+}
+
+export type FolderId = "captacoes" | "aprovados" | "marca" | "relatorios" | "enviados";
+
+export const FOLDERS: { id: FolderId; label: string; hint: string }[] = [
+  { id: "captacoes", label: "Captações", hint: "Brutos e selecionados das sessões" },
+  { id: "aprovados", label: "Aprovados", hint: "Peças finais prontas para publicar" },
+  { id: "marca", label: "Identidade", hint: "Logotipos, fontes e guias" },
+  { id: "relatorios", label: "Relatórios", hint: "Resultados e planejamentos" },
+  { id: "enviados", label: "Enviados pelo cliente", hint: "O que o cliente compartilhou" },
+];
+
+export interface FileItem {
+  id: string;
+  clientId: string;
+  folder: FolderId;
+  name: string;
+  kind: "image" | "video" | "file";
+  size: number;
+  at: string;
+  by: string;
+  src?: string | undefined;
+  pos?: string | undefined;
+}
+
+export interface TransferRule {
+  id: string;
+  label: string;
+  description: string;
+  /** Expressão usada pela IA simulada para reconhecer o assunto. */
+  pattern: string;
+  examples: string[];
+  on: boolean;
+  to: TeamId | "responsavel";
+  urgent: boolean;
+  reply: string;
+  hits: number;
+}
+
+export interface AiSettings {
+  enabled: boolean;
+  tone: "proximo" | "formal";
+  afterHours: boolean;
 }
 
 export const TEAM: Record<TeamId, { name: string; first: string; role: string; initials: string }> =
@@ -155,6 +210,27 @@ export const DEMO_CLIENT = {
     { name: "Produção Audiovisual", detail: "1 captação mensal" },
     { name: "Estratégia", detail: "Reunião mensal" },
   ],
+};
+
+const CLIENT_EXTRA: Record<string, { contact: string; since: string }> = {
+  north: { contact: "Lucas Andrade", since: "2024-03" },
+  velora: { contact: "Camila Rocha", since: "2023-08" },
+  nucleo: { contact: "Rafael Nunes", since: "2024-01" },
+  casaverde: { contact: "Helena Prado", since: "2023-11" },
+  altiora: { contact: "Pedro Alves", since: "2022-06" },
+  mare: { contact: "Téo Martins", since: "2024-09" },
+  lume: { contact: "Sofia Lemos", since: "2023-04" },
+  brasa: { contact: "Diego Ferraz", since: "2025-02" },
+  serra: { contact: "Júlia Serra", since: "2024-05" },
+  nuvem: { contact: "Bianca Tavares", since: "2025-04" },
+  kora: { contact: "Dr. André Kato", since: "2023-02" },
+  vertice: { contact: "Renata Vieira", since: "2022-10" },
+  linho: { contact: "Clara Menezes", since: "2025-01" },
+  pulso: { contact: "Marta Ribeiro", since: "2024-11" },
+  arco: { contact: "Fábio Arruda", since: "2022-03" },
+  folego: { contact: "Igor Santana", since: "2025-06" },
+  mira: { contact: "Paula Mira", since: "2024-07" },
+  solar: { contact: "Chef Tomás Leal", since: "2025-03" },
 };
 
 export const STATUS_LABEL: Record<ContentStatus, string> = {
@@ -191,6 +267,13 @@ function makeAt(base: Date) {
   };
 }
 
+/** Nome do mês (sem acento) relativo ao atual, para nomes de arquivo. */
+function fmtMonth(offset: number) {
+  const d = new Date();
+  d.setMonth(d.getMonth() + offset, 1);
+  return d.toLocaleString("pt-BR", { month: "long" }).normalize("NFD").replace(/[̀-ͯ]/g, "");
+}
+
 export interface Seed {
   seedDay: string;
   contents: Content[];
@@ -198,6 +281,9 @@ export interface Seed {
   clients: Client[];
   activity: Activity[];
   agenda: AgendaEvent[];
+  files: FileItem[];
+  rules: TransferRule[];
+  ai: AiSettings;
 }
 
 export function buildSeed(now = new Date()): Seed {
@@ -211,23 +297,134 @@ export function buildSeed(now = new Date()): Seed {
     return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
   };
 
+  // Os primeiros eventos de cada tipo são os próximos da North Studio (usados na visão geral e pela IA).
   const agenda: AgendaEvent[] = [
     {
       id: "ev-captacao",
       kind: "captacao",
       title: "Captação Coleção Verão",
       at: at(2, 14),
+      duration: 240,
       owner: "ana",
       place: "Estúdio Betterfly · Sala 2",
+      clientId: "north",
+      notes:
+        "Looks da coleção Verão em movimento: 3 reels, 1 vídeo de campanha e fotos para carrossel. Levar 8 peças passadas e 2 modelos confirmados.",
     },
     {
       id: "ev-reuniao",
       kind: "reuniao",
       title: "Reunião de planejamento estratégico",
       at: at(8, 10),
+      duration: 60,
       owner: "marina",
       place: "Google Meet",
+      clientId: "north",
+      notes: "Fechamento do mês, leitura de resultados e pauta do próximo ciclo.",
     },
+    {
+      id: "ev-entrega-rel",
+      kind: "entrega",
+      title: "Relatório mensal de resultados",
+      at: at(10, 18),
+      duration: 30,
+      owner: "marina",
+      place: "Portal · Arquivos",
+      clientId: "north",
+      notes: "Alcance, engajamento e investimento em mídia do ciclo, com recomendações.",
+    },
+    {
+      id: "ev-entrega-edit",
+      kind: "entrega",
+      title: "Entrega da edição · Coleção Verão",
+      at: at(6, 17),
+      duration: 30,
+      owner: "ana",
+      place: "Portal · Aprovações",
+      clientId: "north",
+      notes: "Primeiros cortes dos reels captados, enviados para aprovação.",
+    },
+    {
+      id: "ev-reuniao-old",
+      kind: "reuniao",
+      title: "Alinhamento de campanha",
+      at: at(-6, 15),
+      duration: 45,
+      owner: "marina",
+      place: "Google Meet",
+      clientId: "north",
+    },
+    {
+      id: "ev-captacao-old",
+      kind: "captacao",
+      title: "Captação Lifestyle Urbano",
+      at: at(-12, 9),
+      duration: 300,
+      owner: "ana",
+      place: "Centro histórico · externa",
+      clientId: "north",
+    },
+    // Outros clientes (visíveis só na visão Betterfly)
+    ...(
+      [
+        [
+          "captacao",
+          "Captação Menu Primavera",
+          "casaverde",
+          1,
+          9,
+          180,
+          "ana",
+          "Casa Verde · Pinheiros",
+        ],
+        ["reuniao", "Onboarding de campanha", "velora", 1, 16, 60, "marina", "Google Meet"],
+        [
+          "captacao",
+          "Captação Drop de Verão",
+          "mare",
+          3,
+          7,
+          240,
+          "ana",
+          "Praia do Tombo · externa",
+        ],
+        ["reuniao", "Revisão de resultados", "nucleo", 4, 11, 45, "bruno", "Escritório Betterfly"],
+        [
+          "entrega",
+          "Entrega do vídeo institucional",
+          "altiora",
+          5,
+          18,
+          30,
+          "ana",
+          "Portal · Aprovações",
+        ],
+        [
+          "captacao",
+          "Captação Grãos e Torra",
+          "serra",
+          6,
+          8,
+          180,
+          "ana",
+          "Serra Café · Torrefação",
+        ],
+        ["reuniao", "Planejamento trimestral", "vertice", 9, 14, 90, "marina", "Google Meet"],
+        ["captacao", "Captação Enxoval", "linho", 11, 10, 180, "ana", "Estúdio Betterfly · Sala 1"],
+        ["reuniao", "Kickoff de conteúdo", "folego", 13, 9, 60, "marina", "Google Meet"],
+        ["reuniao", "Alinhamento mensal", "kora", -2, 10, 45, "marina", "Google Meet"],
+        ["captacao", "Captação Aula Aberta", "pulso", -4, 7, 120, "ana", "Pulso Pilates"],
+      ] as const
+    ).map(([kind, title, clientId, d, h, duration, owner, place], i) => ({
+      id: `ev-x${i}`,
+      kind,
+      title,
+      at: at(d, h),
+      duration,
+      owner,
+      place,
+      clientId,
+    })),
   ];
 
   const contents: Content[] = [
@@ -727,7 +924,10 @@ export function buildSeed(now = new Date()): Seed {
     ],
     ["mira", "Mira Óptica", "Óptica", "Gestão Essencial", "bruno", 0, 0, 6, "Carrossel · Armações"],
     ["solar", "Solar Bistrô", "Gastronomia", "Gestão Essencial", "ana", 0, 0, 8, "Fotos · Brunch"],
-  ].map(([id, name, segment, plan, owner, approvals, changes, days, label]) => ({
+  ].map(([id, name, segment, plan, owner, approvals, changes, days, label], i) => ({
+    ...CLIENT_EXTRA[id as string]!,
+    planned: id === "north" ? 12 : 8 + ((i * 5) % 9),
+    published: id === "north" ? 0 : 2 + ((i * 3) % 5),
     id: id as string,
     name: name as string,
     initials: (name as string)
@@ -978,5 +1178,223 @@ export function buildSeed(now = new Date()): Seed {
     },
   ];
 
-  return { seedDay: todayKey(now), contents, convos, clients, activity, agenda };
+  const MB = 1024 * 1024;
+  let fid = 0;
+  const file = (
+    clientId: string,
+    folder: FolderId,
+    name: string,
+    kind: FileItem["kind"],
+    sizeMb: number,
+    days: number,
+    by: string,
+    src?: string,
+    pos?: string,
+  ): FileItem => ({
+    id: `f${++fid}`,
+    clientId,
+    folder,
+    name,
+    kind,
+    size: Math.round(sizeMb * MB),
+    at: at(days, 9 + (fid % 8), (fid * 7) % 60),
+    by,
+    src,
+    pos,
+  });
+  const files: FileItem[] = [
+    file("north", "captacoes", "verao-look-01.jpg", "image", 8.4, -1, "Ana Costa", case1),
+    file("north", "captacoes", "verao-look-02.jpg", "image", 7.9, -1, "Ana Costa", prod1),
+    file(
+      "north",
+      "captacoes",
+      "verao-look-03.jpg",
+      "image",
+      9.1,
+      -1,
+      "Ana Costa",
+      case3,
+      "center 30%",
+    ),
+    file("north", "captacoes", "bastidores-verao.mp4", "video", 412, -1, "Ana Costa", case4),
+    file("north", "captacoes", "lifestyle-urbano-sel.jpg", "image", 6.2, -12, "Ana Costa", prod3),
+    file("north", "captacoes", "lifestyle-urbano-bruto.zip", "file", 2380, -12, "Ana Costa"),
+    file("north", "aprovados", "reels-drop-outono-final.mp4", "video", 96, -5, "Bruno Lima", case3),
+    file("north", "aprovados", "carrossel-guia-de-caimento.pdf", "file", 14.2, -3, "Bruno Lima"),
+    file("north", "aprovados", "campanha-outono-capa.jpg", "image", 5.6, -8, "Bruno Lima", case4),
+    file(
+      "north",
+      "aprovados",
+      "stories-bastidores-01.jpg",
+      "image",
+      3.1,
+      -2,
+      "Bruno Lima",
+      prod1,
+      "center 20%",
+    ),
+    file("north", "marca", "north-studio-logo.svg", "file", 0.04, -140, "Marina Santos"),
+    file("north", "marca", "guia-de-marca-2025.pdf", "file", 18.7, -140, "Marina Santos"),
+    file("north", "marca", "tipografia-north.zip", "file", 2.3, -140, "Marina Santos"),
+    file("north", "relatorios", `relatorio-${fmtMonth(-1)}.pdf`, "file", 4.8, -20, "Marina Santos"),
+    file("north", "relatorios", "planejamento-trimestral.pdf", "file", 6.1, -24, "Marina Santos"),
+    file("north", "enviados", "briefing-colecao-verao.pdf", "file", 2.2, -15, "Lucas Andrade"),
+    file(
+      "north",
+      "enviados",
+      "referencias-verao.jpg",
+      "image",
+      1.9,
+      -15,
+      "Lucas Andrade",
+      prod3,
+      "center 70%",
+    ),
+    file(
+      "velora",
+      "captacoes",
+      "rotina-noturna-01.jpg",
+      "image",
+      7.2,
+      -3,
+      "Ana Costa",
+      case1,
+      "center 60%",
+    ),
+    file(
+      "velora",
+      "relatorios",
+      `relatorio-${fmtMonth(-1)}.pdf`,
+      "file",
+      3.9,
+      -19,
+      "Marina Santos",
+    ),
+    file(
+      "casaverde",
+      "captacoes",
+      "menu-primavera-teste.jpg",
+      "image",
+      6.6,
+      -2,
+      "Ana Costa",
+      prod3,
+    ),
+    file(
+      "altiora",
+      "aprovados",
+      "obra-jardins-corte-final.mp4",
+      "video",
+      640,
+      -1,
+      "Ana Costa",
+      case4,
+      "center 80%",
+    ),
+    file("altiora", "enviados", "plantas-obra-jardins.pdf", "file", 22.4, -9, "Pedro Alves"),
+    file(
+      "mare",
+      "aprovados",
+      "drop-verao-stories.mp4",
+      "video",
+      48,
+      -4,
+      "Bruno Lima",
+      case3,
+      "center 60%",
+    ),
+    file("nucleo", "relatorios", "desafio-21-dias-roteiro.pdf", "file", 1.2, -2, "Bruno Lima"),
+    file("serra", "enviados", "fotos-torra-celular.zip", "file", 164, -6, "Júlia Serra"),
+  ];
+
+  const rules: TransferRule[] = [
+    {
+      id: "equipe",
+      label: "Cliente pede para falar com uma pessoa",
+      description:
+        "Sempre que o cliente pedir atendimento humano, a IA oferece a transferência na hora.",
+      pattern:
+        "(falar|conversar|atendimento).*(equipe|pessoa|humano|atendente|alguem|marina)|atendimento humano",
+      examples: ["Quero falar com alguém da equipe", "Preciso de atendimento humano"],
+      on: true,
+      to: "responsavel",
+      urgent: false,
+      reply:
+        "Claro! Posso encaminhar agora para a equipe Betterfly. Quem assumir já recebe todo o histórico desta conversa.",
+      hits: 9,
+    },
+    {
+      id: "estrategia",
+      label: "Mudança de estratégia ou posicionamento",
+      description: "Decisões de rumo da marca ficam com a estratégia, não com a IA.",
+      pattern: "estrateg|mudar|mudanca|reposicion|posicionamento",
+      examples: ["Quero mudar a estratégia do mês que vem", "Podemos repensar o posicionamento?"],
+      on: true,
+      to: "marina",
+      urgent: false,
+      reply: "Esse assunto merece uma conversa com nossa equipe estratégica.",
+      hits: 4,
+    },
+    {
+      id: "financeiro",
+      label: "Orçamento, contrato ou pagamento",
+      description: "Valores, propostas, notas e contratos nunca são respondidos pela IA.",
+      pattern: "orcament|preco|valor|contrato|pagamento|boleto|nota fiscal|fatura|cancel",
+      examples: ["Quanto custa uma captação extra?", "Preciso da segunda via do boleto"],
+      on: true,
+      to: "marina",
+      urgent: false,
+      reply: "Valores e contratos são tratados diretamente pela nossa equipe.",
+      hits: 6,
+    },
+    {
+      id: "reclamacao",
+      label: "Reclamação, erro ou insatisfação",
+      description: "Encaminha com prioridade alta e avisa o responsável pela conta.",
+      pattern: "reclama|insatisf|errad|erro\\b|problema|chatead|decepcion|pessimo",
+      examples: ["Publicaram o post com o preço errado", "Não gostei do resultado"],
+      on: true,
+      to: "responsavel",
+      urgent: true,
+      reply: "Sinto muito por isso. Vou levar agora para a equipe com prioridade.",
+      hits: 2,
+    },
+    {
+      id: "urgente",
+      label: "Pedido urgente",
+      description: "Mensagens com urgência explícita vão direto para a fila prioritária.",
+      pattern: "urgente|urgencia|imediat|o quanto antes|agora mesmo",
+      examples: ["É urgente, preciso tirar um post do ar", "Preciso disso o quanto antes"],
+      on: false,
+      to: "bruno",
+      urgent: true,
+      reply: "Entendi a urgência. Vou chamar a equipe agora mesmo.",
+      hits: 0,
+    },
+    {
+      id: "sem-resposta",
+      label: "IA sem resposta confiável",
+      description: "Quando a informação não está no portal, a IA prefere transferir a arriscar.",
+      pattern: "",
+      examples: ["Perguntas fora do contexto do projeto"],
+      on: true,
+      to: "responsavel",
+      urgent: false,
+      reply:
+        "Não encontrei uma resposta confiável para isso nas informações do seu projeto. Prefere que eu encaminhe para a equipe?",
+      hits: 3,
+    },
+  ];
+
+  return {
+    seedDay: todayKey(now),
+    contents,
+    convos,
+    clients,
+    activity,
+    agenda,
+    files,
+    rules,
+    ai: { enabled: true, tone: "proximo", afterHours: true },
+  };
 }

@@ -14,6 +14,8 @@ export interface BotReply {
   }[];
   topics: string[];
   pendingOffer?: boolean;
+  /** Regra de transferência que gerou a resposta. */
+  rule?: string;
 }
 
 const norm = (s: string) =>
@@ -56,31 +58,30 @@ export function botReply(text: string, state: Seed, convo: Convo): BotReply {
     };
   }
 
-  if (
-    /(falar|conversar|atendimento).*(equipe|pessoa|humano|atendente|alguem|marina)|atendimento humano/.test(
-      t,
-    )
-  ) {
+  // Regras de transferência configuradas em Automação (na ordem da lista).
+  for (const rule of state.rules) {
+    if (!rule.pattern || !new RegExp(rule.pattern).test(t)) continue;
+    if (!rule.on) {
+      // Regra desligada: a IA só redireciona pedidos de atendimento humano para um recado.
+      if (rule.id === "equipe")
+        return {
+          topics: ["equipe"],
+          rule: rule.id,
+          messages: [
+            {
+              text: "Por aqui o atendimento inicial é comigo. Me conta o que você precisa e eu deixo registrado para a equipe.",
+            },
+          ],
+        };
+      continue;
+    }
     return {
-      topics: ["equipe"],
-      messages: [
-        {
-          text: "Claro! Posso encaminhar agora para a equipe Betterfly. Quem assumir já recebe todo o histórico desta conversa.",
-          actions: "handoff",
-        },
-      ],
-    };
-  }
-
-  if (
-    /(estrateg|mudar|mudanca|reposicion|orcament|preco|contrato|reclama|insatisf|cancel)/.test(t)
-  ) {
-    return {
-      topics: ["estrategia"],
-      messages: [
-        { text: "Esse assunto merece uma conversa com nossa equipe estratégica." },
-        { text: "Posso encaminhar você agora?", actions: "handoff" },
-      ],
+      topics: [rule.id],
+      rule: rule.id,
+      messages:
+        rule.id === "equipe"
+          ? [{ text: rule.reply, actions: "handoff" }]
+          : [{ text: rule.reply }, { text: "Posso encaminhar você agora?", actions: "handoff" }],
     };
   }
 
@@ -171,13 +172,22 @@ export function botReply(text: string, state: Seed, convo: Convo): BotReply {
     };
   }
 
+  const fallback = state.rules.find((r) => r.id === "sem-resposta");
+  if (fallback && !fallback.on) {
+    return {
+      topics: ["sem-resposta-ia"],
+      messages: [
+        {
+          text: "Ainda não tenho essa informação no seu projeto. Deixei sua pergunta registrada e a equipe complementa por aqui.",
+        },
+      ],
+    };
+  }
   return {
     topics: ["sem-resposta"],
+    rule: "sem-resposta",
     messages: [
-      {
-        text: "Não encontrei uma resposta confiável para isso nas informações do seu projeto. Prefere que eu encaminhe para a equipe?",
-        actions: "handoff",
-      },
+      { text: fallback?.reply ?? "Prefere que eu encaminhe para a equipe?", actions: "handoff" },
     ],
   };
 }
@@ -197,6 +207,9 @@ export function buildSummary(convo: Convo, state: Seed) {
     );
   if (has("aprovacoes")) parts.push("Consultou os conteúdos aguardando aprovação.");
   if (has("calendario")) parts.push("Consultou o calendário de publicações.");
+  if (has("financeiro")) parts.push("Assunto financeiro: orçamento, contrato ou pagamento.");
+  if (has("reclamacao")) parts.push("Cliente relatou um problema ou insatisfação.");
+  if (has("urgente")) parts.push("Cliente sinalizou urgência.");
   if (!parts.length) parts.push("Cliente solicitou atendimento da equipe.");
   return parts.join(" ");
 }

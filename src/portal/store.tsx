@@ -21,22 +21,29 @@ import {
   buildSeed,
   todayKey,
   type Activity,
+  type AiSettings,
   type Attachment,
   type Content,
   type Convo,
+  type FileItem,
+  type FolderId,
   type Message,
   type Seed,
   type TeamId,
+  type TransferRule,
 } from "./data";
 import { fmt } from "./format";
 
-const STORAGE_KEY = "betterfly-demo-v1";
+const STORAGE_KEY = "betterfly-demo-v2";
 
 type Action =
   | { type: "replace"; state: Seed }
   | { type: "content"; id: string; patch: (c: Content) => Content }
   | { type: "convo"; id: string; patch: (c: Convo) => Convo }
-  | { type: "activity"; item: Activity };
+  | { type: "activity"; item: Activity }
+  | { type: "rule"; id: string; patch: Partial<TransferRule> }
+  | { type: "ai"; patch: Partial<AiSettings> }
+  | { type: "file"; item: FileItem };
 
 function reducer(state: Seed, action: Action): Seed {
   switch (action.type) {
@@ -54,6 +61,15 @@ function reducer(state: Seed, action: Action): Seed {
       };
     case "activity":
       return { ...state, activity: [action.item, ...state.activity] };
+    case "rule":
+      return {
+        ...state,
+        rules: state.rules.map((r) => (r.id === action.id ? { ...r, ...action.patch } : r)),
+      };
+    case "ai":
+      return { ...state, ai: { ...state.ai, ...action.patch } };
+    case "file":
+      return { ...state, files: [action.item, ...state.files] };
   }
 }
 
@@ -69,6 +85,10 @@ function loadInitial(): Seed {
       if (parsed.seedDay === todayKey()) {
         // Nunca restaurar indicador de digitação pendente
         parsed.convos = parsed.convos.map((c) => ({ ...c, typing: null }));
+        // Pré-visualizações locais (blob:) não sobrevivem ao recarregamento
+        parsed.files = parsed.files.map((f) =>
+          f.src?.startsWith("blob:") ? { ...f, src: undefined } : f,
+        );
         return parsed;
       }
     }
@@ -89,6 +109,10 @@ interface DemoApi {
   returnToAI: (convoId: string) => void;
   sendAgentMessage: (convoId: string, text: string, agent: TeamId, attachment?: Attachment) => void;
   markRead: (convoId: string) => void;
+  updateRule: (id: string, patch: Partial<TransferRule>) => void;
+  setAi: (patch: Partial<AiSettings>) => void;
+  addFile: (clientId: string, folder: FolderId, a: Attachment, by: string) => void;
+  logActivity: (text: string, kind: Activity["kind"]) => void;
   reset: () => void;
 }
 
@@ -218,11 +242,47 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const addFile = useCallback((clientId: string, folder: FolderId, a: Attachment, by: string) => {
+    dispatch({
+      type: "file",
+      item: {
+        id: newId("f"),
+        clientId,
+        folder,
+        name: a.name,
+        kind: a.kind,
+        size: a.size,
+        at: nowIso(),
+        by,
+        src: a.url,
+      },
+    });
+  }, []);
+
   const sendClientMessage = useCallback(
     (convoId: string, text: string, attachment?: Attachment) => {
       pushMessages(convoId, [{ from: "client", text, attachment }]);
       const convo = stateRef.current.convos.find((c) => c.id === convoId);
       if (!convo) return;
+      if (attachment) addFile(convo.clientId, "enviados", attachment, convo.contact);
+
+      // IA pausada em Automação: a mensagem vai direto para a fila da equipe.
+      if (!stateRef.current.ai.enabled && convo.status === "ia") {
+        setConvo(convoId, {
+          status: "aguardando",
+          unread: true,
+          summary: text || "Arquivo enviado pelo cliente.",
+        });
+        later(700, () =>
+          pushMessages(convoId, [
+            {
+              from: "system",
+              text: "Mensagem recebida. A equipe Betterfly responde por aqui assim que possível.",
+            },
+          ]),
+        );
+        return;
+      }
 
       // Anexo com a IA atendendo: confirma o recebimento (e responde o texto, se houver).
       if (attachment && convo.status === "ia") {
@@ -258,6 +318,10 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       }
 
       const reply = botReply(text, stateRef.current, convo);
+      if (reply.rule) {
+        const hits = stateRef.current.rules.find((r) => r.id === reply.rule)?.hits ?? 0;
+        dispatch({ type: "rule", id: reply.rule, patch: { hits: hits + 1 } });
+      }
       setConvo(convoId, { typing: "ai" });
       reply.messages.forEach((m, i) => {
         later(900 + i * 1100 + (attachment ? 1100 : 0), () => {
@@ -270,6 +334,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
                 ...c,
                 typing: null,
                 pendingOffer: reply.pendingOffer ?? false,
+                rule: reply.rule ?? c.rule,
                 topics: Array.from(new Set([...c.topics, ...reply.topics])),
               }),
             });
@@ -277,7 +342,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         });
       });
     },
-    [later, pushMessages, setConvo],
+    [addFile, later, pushMessages, setConvo],
   );
 
   const answerHandoff = useCallback(
@@ -309,20 +374,29 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       setConvo(convoId, { typing: "system" });
       later(1600, () => {
         const convo = stateRef.current.convos.find((c) => c.id === convoId)!;
-        const owner = TEAM[DEMO_CLIENT.owner];
+        const rule = stateRef.current.rules.find((r) => r.id === convo.rule);
+        const target =
+          rule && rule.to !== "responsavel"
+            ? rule.to
+            : (stateRef.current.clients.find((c) => c.id === convo.clientId)?.owner ??
+              DEMO_CLIENT.owner);
         pushMessages(convoId, [
           {
             from: "system",
-            text: `Conversa encaminhada para a equipe Betterfly. ${owner.name} foi notificada com o histórico e um resumo do assunto.`,
+            text: `Conversa encaminhada para a equipe Betterfly${rule?.urgent ? " com prioridade alta" : ""}. ${TEAM[target].name} recebeu o histórico e um resumo do assunto.`,
           },
         ]);
         setConvo(convoId, {
           typing: null,
           status: "aguardando",
           unread: true,
-          subject: convo.topics.includes("estrategia")
-            ? "Estratégia do próximo mês"
-            : "Atendimento com a equipe",
+          urgent: rule?.urgent ?? false,
+          subject:
+            rule?.id === "estrategia"
+              ? "Estratégia do próximo mês"
+              : rule && rule.id !== "equipe" && rule.id !== "sem-resposta"
+                ? rule.label
+                : "Atendimento com a equipe",
           summary: buildSummary(convo, stateRef.current),
         });
       });
@@ -374,6 +448,17 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     [setConvo],
   );
 
+  const updateRule = useCallback(
+    (id: string, patch: Partial<TransferRule>) => dispatch({ type: "rule", id, patch }),
+    [],
+  );
+
+  const setAi = useCallback((patch: Partial<AiSettings>) => dispatch({ type: "ai", patch }), []);
+
+  const logActivity = useCallback((text: string, kind: Activity["kind"]) => {
+    dispatch({ type: "activity", item: { id: newId("a"), at: nowIso(), text, kind } });
+  }, []);
+
   const reset = useCallback(() => {
     timers.current.forEach(clearTimeout);
     timers.current = [];
@@ -392,6 +477,10 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       returnToAI,
       sendAgentMessage,
       markRead,
+      updateRule,
+      setAi,
+      addFile,
+      logActivity,
       reset,
     }),
     [
@@ -405,6 +494,10 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       returnToAI,
       sendAgentMessage,
       markRead,
+      updateRule,
+      setAi,
+      addFile,
+      logActivity,
       reset,
     ],
   );

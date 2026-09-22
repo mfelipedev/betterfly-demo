@@ -288,15 +288,17 @@ function Bubble({
   );
 }
 
-const formatSize = (bytes: number) =>
+export const formatSize = (bytes: number) =>
   bytes < 1024 * 1024
     ? `${Math.max(1, Math.round(bytes / 1024))} KB`
-    : `${(bytes / (1024 * 1024)).toFixed(1).replace(".", ",")} MB`;
+    : bytes < 1024 ** 3
+      ? `${(bytes / (1024 * 1024)).toFixed(1).replace(".", ",")} MB`
+      : `${(bytes / 1024 ** 3).toFixed(1).replace(".", ",")} GB`;
 
-const kindOf = (file: File): Attachment["kind"] =>
+export const kindOf = (file: File): Attachment["kind"] =>
   file.type.startsWith("image/") ? "image" : file.type.startsWith("video/") ? "video" : "file";
 
-function FileIcon({ kind, className }: { kind: Attachment["kind"]; className?: string }) {
+export function FileIcon({ kind, className }: { kind: Attachment["kind"]; className?: string }) {
   const Icon = kind === "image" ? ImageIcon : kind === "video" ? Film : FileText;
   return <Icon className={className} />;
 }
