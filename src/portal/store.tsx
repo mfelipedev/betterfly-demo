@@ -21,6 +21,7 @@ import {
   buildSeed,
   todayKey,
   type Activity,
+  type Attachment,
   type Content,
   type Convo,
   type Message,
@@ -82,11 +83,11 @@ interface DemoApi {
   approve: (id: string) => void;
   requestChange: (id: string, text: string) => void;
   comment: (id: string, text: string, role: "client" | "agency") => void;
-  sendClientMessage: (convoId: string, text: string) => void;
+  sendClientMessage: (convoId: string, text: string, attachment?: Attachment) => void;
   answerHandoff: (convoId: string, messageId: string, accept: boolean) => void;
   assume: (convoId: string, agent: TeamId) => void;
   returnToAI: (convoId: string) => void;
-  sendAgentMessage: (convoId: string, text: string, agent: TeamId) => void;
+  sendAgentMessage: (convoId: string, text: string, agent: TeamId, attachment?: Attachment) => void;
   markRead: (convoId: string) => void;
   reset: () => void;
 }
@@ -218,10 +219,25 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const sendClientMessage = useCallback(
-    (convoId: string, text: string) => {
-      pushMessages(convoId, [{ from: "client", text }]);
+    (convoId: string, text: string, attachment?: Attachment) => {
+      pushMessages(convoId, [{ from: "client", text, attachment }]);
       const convo = stateRef.current.convos.find((c) => c.id === convoId);
       if (!convo) return;
+
+      // Anexo com a IA atendendo: confirma o recebimento (e responde o texto, se houver).
+      if (attachment && convo.status === "ia") {
+        setConvo(convoId, { typing: "ai" });
+        later(900, () => {
+          pushMessages(convoId, [
+            {
+              from: "ai",
+              text: `Recebi “${attachment.name}”. O arquivo fica salvo em Arquivos › Enviados por você, e a equipe Betterfly já tem acesso a ele.`,
+            },
+          ]);
+          if (!text) setConvo(convoId, { typing: null });
+        });
+        if (!text) return;
+      }
 
       // Com a equipe envolvida, a IA não responde por cima do humano.
       if (convo.status === "humano") {
@@ -244,7 +260,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       const reply = botReply(text, stateRef.current, convo);
       setConvo(convoId, { typing: "ai" });
       reply.messages.forEach((m, i) => {
-        later(900 + i * 1100, () => {
+        later(900 + i * 1100 + (attachment ? 1100 : 0), () => {
           pushMessages(convoId, [{ from: "ai", ...m }]);
           if (i === reply.messages.length - 1) {
             dispatch({
@@ -336,8 +352,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
   );
 
   const sendAgentMessage = useCallback(
-    (convoId: string, text: string, agent: TeamId) => {
-      pushMessages(convoId, [{ from: "agent", agent, text }]);
+    (convoId: string, text: string, agent: TeamId, attachment?: Attachment) => {
+      pushMessages(convoId, [{ from: "agent", agent, text, attachment }]);
       if (convoId === "cv-north") {
         dispatch({
           type: "activity",

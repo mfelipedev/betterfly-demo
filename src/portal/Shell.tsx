@@ -134,7 +134,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
         >
           {!collapsed && (
             <Link to="/" aria-label="Site Betterfly">
-              <img src={logo} alt="Betterfly" className="h-7 w-auto" />
+              <img src={logo} alt="Betterfly" className="h-10 w-auto" />
             </Link>
           )}
           <button
@@ -421,7 +421,7 @@ function TopBar({ mode }: { mode: Mode }) {
     <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border px-4 md:h-16 md:px-8">
       <div className="flex min-w-0 items-center gap-3">
         <Link to="/" className="md:hidden" aria-label="Site Betterfly">
-          <img src={logo} alt="Betterfly" className="h-6 w-auto" />
+          <img src={logo} alt="Betterfly" className="h-8 w-auto" />
         </Link>
         <span className="hidden items-center gap-2 rounded-full border border-acid/30 px-2.5 py-1 text-[0.58rem] font-medium tracking-[0.2em] text-acid uppercase sm:inline-flex">
           <span className="signal-dot h-1.5 w-1.5 rounded-full bg-acid" />

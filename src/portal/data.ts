@@ -61,6 +61,14 @@ export interface Content {
 
 export type MessageFrom = "client" | "ai" | "agent" | "system";
 
+export interface Attachment {
+  name: string;
+  size: number;
+  kind: "image" | "video" | "file";
+  /** URL local (object URL) só para pré-visualizar imagens na sessão atual. */
+  url?: string | undefined;
+}
+
 export interface Message {
   id: string;
   from: MessageFrom;
@@ -71,6 +79,7 @@ export interface Message {
   links?: { label: string; to: string }[];
   actions?: "handoff";
   actionsDone?: boolean;
+  attachment?: Attachment | undefined;
 }
 
 export type ConvoStatus = "ia" | "aguardando" | "humano" | "resolvida";

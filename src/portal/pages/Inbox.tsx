@@ -196,7 +196,7 @@ function ConvoItem({ c, active, onClick }: { c: Convo; active: boolean; onClick:
         </span>
         <span className="mt-0.5 block truncate text-xs text-bone/50">
           {prefix}
-          {last.text}
+          {last.text || (last.attachment ? `Anexo: ${last.attachment.name}` : "")}
         </span>
         <span className="mt-2 flex items-center gap-1.5">
           <ConvoBadge status={c.status} />
@@ -358,8 +358,8 @@ function ConversationPane({
         <Composer
           prefill={prefill}
           placeholder={`Responder ${convo.contact.split(" ")[0]}…`}
-          onSend={(t) => {
-            sendAgentMessage(convo.id, t, convo.agent ?? ME);
+          onSend={(t, a) => {
+            sendAgentMessage(convo.id, t, convo.agent ?? ME, a);
             setPrefill(undefined);
           }}
           before={

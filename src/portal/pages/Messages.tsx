@@ -66,7 +66,7 @@ export function Messages() {
 
       <div className="mx-auto w-full max-w-3xl">
         <Composer
-          onSend={(t) => sendClientMessage(convo.id, t)}
+          onSend={(t, a) => sendClientMessage(convo.id, t, a)}
           disabled={busy}
           placeholder={
             convo.status === "humano"

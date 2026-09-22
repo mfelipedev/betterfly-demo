@@ -2,10 +2,10 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowUpRight, Loader2, Send } from "lucide-react";
+import { ArrowUpRight, FileText, Film, ImageIcon, Loader2, Paperclip, Send, X } from "lucide-react";
 import { differenceInCalendarDays } from "date-fns";
 import { cn } from "@/lib/utils";
-import { STATUS_LABEL, TEAM, type Convo, type Message } from "./data";
+import { STATUS_LABEL, TEAM, type Attachment, type Convo, type Message } from "./data";
 import { fmt } from "./format";
 import { useDemo } from "./store";
 import { AiMark, Avatar, TeamAvatar, Thumb } from "./ui";
@@ -192,25 +192,29 @@ function Bubble({
             <span>{fmt(m.at, "HH:mm")}</span>
           </span>
         )}
-        <div
-          className={cn(
-            "rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-line",
-            m.from === "client" && perspective === "client" && "rounded-br-sm bg-bone text-ink",
-            m.from === "client" &&
-              perspective === "agency" &&
-              "rounded-bl-sm bg-bone/[0.08] text-bone/90",
-            m.from === "ai" &&
-              (mine
-                ? "rounded-br-sm border border-acid/20 bg-acid/[0.06]"
-                : "rounded-bl-sm border border-acid/15 bg-acid/[0.05]"),
-            m.from === "agent" &&
-              (mine
-                ? "rounded-br-sm bg-bone text-ink"
-                : "rounded-bl-sm bg-bone/[0.08] text-bone/90"),
-          )}
-        >
-          {m.text}
-        </div>
+        {m.attachment && <AttachmentView a={m.attachment} />}
+        {m.text && (
+          <div
+            className={cn(
+              "rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-line",
+              m.attachment && "mt-1.5",
+              m.from === "client" && perspective === "client" && "rounded-br-sm bg-bone text-ink",
+              m.from === "client" &&
+                perspective === "agency" &&
+                "rounded-bl-sm bg-bone/[0.08] text-bone/90",
+              m.from === "ai" &&
+                (mine
+                  ? "rounded-br-sm border border-acid/20 bg-acid/[0.06]"
+                  : "rounded-bl-sm border border-acid/15 bg-acid/[0.05]"),
+              m.from === "agent" &&
+                (mine
+                  ? "rounded-br-sm bg-bone text-ink"
+                  : "rounded-bl-sm bg-bone/[0.08] text-bone/90"),
+            )}
+          >
+            {m.text}
+          </div>
+        )}
 
         {m.cards && m.cards.length > 0 && (
           <div className="mt-2 grid w-full min-w-[240px] gap-2 sm:min-w-[320px]">
@@ -284,6 +288,49 @@ function Bubble({
   );
 }
 
+const formatSize = (bytes: number) =>
+  bytes < 1024 * 1024
+    ? `${Math.max(1, Math.round(bytes / 1024))} KB`
+    : `${(bytes / (1024 * 1024)).toFixed(1).replace(".", ",")} MB`;
+
+const kindOf = (file: File): Attachment["kind"] =>
+  file.type.startsWith("image/") ? "image" : file.type.startsWith("video/") ? "video" : "file";
+
+function FileIcon({ kind, className }: { kind: Attachment["kind"]; className?: string }) {
+  const Icon = kind === "image" ? ImageIcon : kind === "video" ? Film : FileText;
+  return <Icon className={className} />;
+}
+
+function AttachmentView({ a }: { a: Attachment }) {
+  const [broken, setBroken] = useState(false);
+  if (a.kind === "image" && a.url && !broken) {
+    return (
+      <div className="overflow-hidden rounded-2xl border border-border">
+        <img
+          src={a.url}
+          alt={a.name}
+          onError={() => setBroken(true)}
+          className="max-h-64 max-w-[260px] object-cover"
+        />
+        <p className="truncate bg-surface px-3 py-1.5 text-[0.68rem] text-bone/50">
+          {a.name} · {formatSize(a.size)}
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div className="flex max-w-[280px] items-center gap-3 rounded-2xl border border-border bg-surface/70 p-2.5 pr-4">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-acid/10 text-acid">
+        <FileIcon kind={a.kind} className="h-5 w-5" />
+      </span>
+      <span className="min-w-0">
+        <span className="block truncate text-sm text-bone/90">{a.name}</span>
+        <span className="text-[0.68rem] text-bone/45">{formatSize(a.size)}</span>
+      </span>
+    </div>
+  );
+}
+
 export function Composer({
   onSend,
   placeholder,
@@ -291,32 +338,98 @@ export function Composer({
   prefill,
   before,
 }: {
-  onSend: (text: string) => void;
+  onSend: (text: string, attachment?: Attachment) => void;
   placeholder: string;
   disabled?: boolean;
   prefill?: string | undefined;
   before?: ReactNode;
 }) {
   const [text, setText] = useState("");
+  const [file, setFile] = useState<Attachment | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (prefill) setText(prefill);
   }, [prefill]);
 
+  const pick = (f: File | undefined) => {
+    if (!f) return;
+    const kind = kindOf(f);
+    setFile({
+      name: f.name,
+      size: f.size,
+      kind,
+      url: kind === "image" ? URL.createObjectURL(f) : undefined,
+    });
+  };
+
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const t = text.trim();
-    if (!t || disabled) return;
-    onSend(t);
+    if ((!t && !file) || disabled) return;
+    onSend(t, file ?? undefined);
     setText("");
+    setFile(null);
   };
 
   return (
     <div className="border-t border-border bg-background px-3 pt-3 pb-3 md:px-6 md:pb-5">
       {before}
+      <AnimatePresence>
+        {file && (
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            className="mb-2 flex w-fit max-w-full items-center gap-3 rounded-xl border border-border bg-surface/70 p-2 pr-2"
+          >
+            {file.kind === "image" && file.url ? (
+              <img src={file.url} alt="" className="h-10 w-10 rounded-lg object-cover" />
+            ) : (
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-acid/10 text-acid">
+                <FileIcon kind={file.kind} className="h-5 w-5" />
+              </span>
+            )}
+            <span className="min-w-0">
+              <span className="block max-w-[220px] truncate text-xs text-bone/90">{file.name}</span>
+              <span className="text-[0.65rem] text-bone/45">
+                {formatSize(file.size)} · pronto para enviar
+              </span>
+            </span>
+            <button
+              type="button"
+              onClick={() => setFile(null)}
+              aria-label="Remover anexo"
+              className="ml-1 rounded-full p-1.5 text-bone/45 transition-colors hover:bg-bone/[0.06] hover:text-bone"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <form
         onSubmit={submit}
-        className="flex items-end gap-2 rounded-2xl border border-border bg-surface/50 p-1.5 pl-4 transition-colors focus-within:border-bone/30"
+        className="flex items-end gap-1.5 rounded-2xl border border-border bg-surface/50 p-1.5 transition-colors focus-within:border-bone/30"
       >
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip"
+          className="hidden"
+          onChange={(e) => {
+            pick(e.target.files?.[0]);
+            e.target.value = "";
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          disabled={disabled}
+          aria-label="Anexar imagem, vídeo ou arquivo"
+          title="Anexar imagem, vídeo ou arquivo"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-bone/50 transition-colors hover:bg-bone/[0.06] hover:text-acid disabled:opacity-30"
+        >
+          <Paperclip className="h-[18px] w-[18px]" />
+        </button>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -332,7 +445,7 @@ export function Composer({
         />
         <button
           type="submit"
-          disabled={!text.trim() || disabled}
+          disabled={(!text.trim() && !file) || disabled}
           aria-label="Enviar mensagem"
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-acid text-ink transition-all hover:brightness-110 disabled:opacity-30"
         >
