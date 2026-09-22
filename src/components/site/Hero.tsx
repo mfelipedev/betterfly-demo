@@ -40,7 +40,7 @@ export function Hero() {
       <div className="pointer-events-none absolute inset-0 grid-lines opacity-[0.18]" aria-hidden />
 
       <div className="relative mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-center px-5 py-4 md:px-10 md:py-6">
-        <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-20">
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-20">
           {/* headline */}
           <div>
             <motion.span
@@ -53,20 +53,20 @@ export function Hero() {
               <span className="label-xs">Agência de marketing · desde 2017</span>
             </motion.span>
 
-            <h1 className="font-display mt-8 max-w-[26ch] text-[clamp(1.6rem,3.6vw,3.25rem)] leading-[1.02] font-medium tracking-[-0.03em] text-balance">
+            <h1 className="font-display mt-6 max-w-[26ch] text-[clamp(1.6rem,3.6vw,3.25rem)] leading-[1.02] font-medium tracking-[-0.03em] text-balance">
               <RevealWords text="Estratégia, conteúdo e produção" />{" "}
               <span className="text-acid">
                 <RevealWords text="que levam sua marca mais alto." delay={0.12} />
               </span>
             </h1>
 
-            <div className="mt-10 h-px w-full max-w-xl bg-border md:mt-12" />
+            <div className="mt-6 h-px w-full max-w-xl bg-border md:mt-10" />
 
             <motion.div
               initial={reduce ? false : { opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.45, ease: EASE }}
-              className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-6"
+              className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-6 md:mt-8"
             >
               <a href="#contato" className="group inline-flex items-center gap-3">
                 <span className="grid h-12 w-12 place-items-center rounded-full bg-acid text-ink transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-45">
