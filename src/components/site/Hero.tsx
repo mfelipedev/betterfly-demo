@@ -11,7 +11,7 @@ const FRENTES = ["Marketing", "Social media", "Tráfego pago", "Audiovisual", "B
 
 const FEATURED = [
   { src: case1, title: "Reposicionamento de marca", tag: "Branding" },
-  { src: prod1, title: "Direção de conteúdo", tag: "Foto & vídeo" },
+  { src: prod1, title: "Direção de conteúdo", tag: "Audiovisual" },
   { src: case2, title: "Presença digital contínua", tag: "Social media" },
 ];
 
@@ -200,7 +200,7 @@ export function Hero() {
           </div>
         </div>
         <p className="sr-only">
-          Frentes de atuação: marketing, social media, tráfego pago, foto e vídeo e branding.
+          Frentes de atuação: marketing, social media, tráfego pago, audiovisual e branding.
         </p>
       </div>
     </>
