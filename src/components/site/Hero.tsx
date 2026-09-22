@@ -195,6 +195,6 @@ export function Hero() {
           Frentes de atuação: marketing, social media, tráfego pago, foto e vídeo e branding.
         </p>
       </div>
-    </section>
+    </>
   );
 }
