@@ -18,8 +18,8 @@ export function Reveal({
   return (
     <motion.div
       className={className}
-      initial={reduce ? undefined : { opacity: 0, y }}
-      whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+      initial={reduce ? false : { opacity: 0, y }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-12% 0px" }}
       transition={{ duration: 0.9, delay, ease: EASE }}
     >
@@ -68,8 +68,8 @@ export function Hairline({ className = "" }: { className?: string }) {
   return (
     <motion.div
       className={`h-px w-full origin-left bg-border ${className}`}
-      initial={reduce ? undefined : { scaleX: 0 }}
-      whileInView={reduce ? undefined : { scaleX: 1 }}
+      initial={reduce ? false : { scaleX: 0 }}
+      whileInView={{ scaleX: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 1.1, ease: EASE }}
     />

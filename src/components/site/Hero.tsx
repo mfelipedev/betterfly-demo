@@ -43,8 +43,8 @@ export function Hero() {
 
         <div className="mt-12 grid gap-10 border-t border-border pt-8 md:grid-cols-[1.1fr_auto] md:items-end">
           <motion.p
-            initial={reduce ? undefined : { opacity: 0, y: 20 }}
-            animate={reduce ? undefined : { opacity: 1, y: 0 }}
+            initial={reduce ? false : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.5, ease: EASE }}
             className="max-w-xl text-base leading-relaxed text-foreground/70 md:text-lg"
           >
@@ -54,8 +54,8 @@ export function Hero() {
           </motion.p>
 
           <motion.div
-            initial={reduce ? undefined : { opacity: 0 }}
-            animate={reduce ? undefined : { opacity: 1 }}
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.7 }}
             className="flex flex-wrap items-center gap-6"
           >
@@ -84,8 +84,8 @@ export function Hero() {
           ].map(([n, label], i) => (
             <motion.div
               key={n}
-              initial={reduce ? undefined : { opacity: 0, y: 14 }}
-              animate={reduce ? undefined : { opacity: 1, y: 0 }}
+              initial={reduce ? false : { opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.8 + i * 0.08, ease: EASE }}
               className="flex items-baseline gap-3"
             >
@@ -103,8 +103,8 @@ export function Hero() {
         width={1254}
         height={1254}
         style={{ opacity: reduce ? 0.06 : undefined }}
-        initial={reduce ? undefined : { opacity: 0, scale: 1.1 }}
-        animate={reduce ? undefined : { opacity: 0.07, scale: 1 }}
+        initial={reduce ? false : { opacity: 0, scale: 1.1 }}
+        animate={{ opacity: 0.07, scale: 1 }}
         transition={{ duration: 1.6, ease: EASE }}
         className="pointer-events-none absolute -top-16 right-[-8%] w-[60vw] max-w-[720px] mix-blend-screen md:-top-24"
       />
