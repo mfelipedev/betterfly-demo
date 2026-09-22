@@ -23,7 +23,11 @@ export function Hero() {
   const go = (step: number) => setI((prev) => (prev + step + FEATURED.length) % FEATURED.length);
 
   return (
-    <section id="inicio" className="relative overflow-hidden pt-32 md:pt-36">
+    <>
+    <section
+      id="inicio"
+      className="relative flex min-h-svh flex-col overflow-hidden pt-24 md:pt-28"
+    >
       {/* acid light source, top-left, dissolving into ink */}
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_95%_at_0%_-10%,color-mix(in_oklab,var(--acid)_26%,transparent),transparent_58%)]"
@@ -35,8 +39,8 @@ export function Hero() {
       />
       <div className="pointer-events-none absolute inset-0 grid-lines opacity-[0.18]" aria-hidden />
 
-      <div className="relative mx-auto w-full max-w-[1600px] px-5 md:px-10">
-        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-20">
+      <div className="relative mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-center px-5 py-2 md:px-10 md:py-6">
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-20">
           {/* headline */}
           <div>
             <motion.span
@@ -49,20 +53,20 @@ export function Hero() {
               <span className="label-xs">Agência de marketing · desde 2017</span>
             </motion.span>
 
-            <h1 className="font-display mt-8 max-w-[26ch] text-[clamp(1.6rem,3.6vw,3.25rem)] leading-[1.02] font-medium tracking-[-0.03em] text-balance">
+            <h1 className="font-display mt-6 max-w-[26ch] text-[clamp(1.6rem,3.6vw,3.25rem)] leading-[1.02] font-medium tracking-[-0.03em] text-balance">
               <RevealWords text="Estratégia, conteúdo e produção" />{" "}
               <span className="text-acid">
                 <RevealWords text="que levam sua marca mais alto." delay={0.12} />
               </span>
             </h1>
 
-            <div className="mt-10 h-px w-full max-w-xl bg-border md:mt-12" />
+            <div className="mt-6 h-px w-full max-w-xl bg-border md:mt-10" />
 
             <motion.div
               initial={reduce ? false : { opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.45, ease: EASE }}
-              className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-6"
+              className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-6 md:mt-8"
             >
               <a href="#contato" className="group inline-flex items-center gap-3">
                 <span className="grid h-12 w-12 place-items-center rounded-full bg-acid text-ink transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:rotate-45">
@@ -89,7 +93,7 @@ export function Hero() {
             className="lg:mt-6"
           >
             <div className="rounded-lg border border-border bg-surface/70 p-3 backdrop-blur-sm">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-md">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-md md:aspect-[4/3]">
                 <motion.img
                   key={item.src}
                   src={item.src}
@@ -140,7 +144,7 @@ export function Hero() {
         initial={reduce ? false : { opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, delay: 0.5, ease: EASE }}
-        className="relative mt-20 w-full md:mt-28"
+        className="relative mt-auto w-full shrink-0"
         aria-hidden
       >
         <svg viewBox="0 0 1000 205" className="block w-full" preserveAspectRatio="xMidYMid meet">
@@ -161,10 +165,10 @@ export function Hero() {
           </text>
         </svg>
       </motion.div>
-
+    </section>
 
       {/* label row */}
-      <div className="relative mt-8 border-t border-border">
+      <div className="relative border-t border-border">
         <div className="mx-auto hidden w-full max-w-[1600px] items-center justify-between px-10 py-5 md:flex">
           {FRENTES.map((f, idx) => (
             <span key={f} className="flex items-center gap-8">
@@ -191,6 +195,6 @@ export function Hero() {
           Frentes de atuação: marketing, social media, tráfego pago, foto e vídeo e branding.
         </p>
       </div>
-    </section>
+    </>
   );
 }
