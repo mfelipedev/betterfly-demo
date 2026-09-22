@@ -20,7 +20,7 @@ export function Experience() {
   return (
     <section className="relative py-24 md:py-36">
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
-        <SectionLabel index="06">Experiência Betterfly</SectionLabel>
+        <SectionLabel index="07">Experiência Betterfly</SectionLabel>
         <h2 className="display-lg mt-8 max-w-[18ch]">O que acontece quando você entra</h2>
 
         <div className="mt-16 grid gap-12 lg:grid-cols-12 lg:gap-16">
@@ -82,7 +82,7 @@ export function Experience() {
                   </span>
                 </Link>
                 <p className="text-xs text-foreground/40">
-                  Um ambiente próprio para nossos clientes
+                  Um ambiente próprio para clientes
                 </p>
               </div>
             </div>
