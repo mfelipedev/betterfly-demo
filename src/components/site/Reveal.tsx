@@ -1,5 +1,5 @@
-import { motion, useReducedMotion } from "motion/react";
-import type { ReactNode } from "react";
+import { motion, useInView, useReducedMotion } from "motion/react";
+import { useRef, type ReactNode } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -39,19 +39,20 @@ export function RevealWords({
   delay?: number;
 }) {
   const reduce = useReducedMotion();
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.1 });
   const words = text.split(" ");
 
   if (reduce) return <span className={className}>{text}</span>;
 
   return (
-    <span className={className}>
+    <span ref={ref} className={className}>
       {words.map((word, i) => (
         <span key={`${word}-${i}`} className="inline-block overflow-hidden align-bottom">
           <motion.span
             className="inline-block"
             initial={{ y: "105%", opacity: 0 }}
-            whileInView={{ y: "0%", opacity: 1 }}
-            viewport={{ once: true, margin: "-10% 0px" }}
+            animate={inView ? { y: "0%", opacity: 1 } : { y: "105%", opacity: 0 }}
             transition={{ duration: 0.85, delay: delay + i * 0.055, ease: EASE }}
           >
             {word}
