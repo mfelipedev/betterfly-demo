@@ -143,7 +143,7 @@ export function Hero() {
         initial={reduce ? false : { opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, delay: 0.5, ease: EASE }}
-        className="relative mt-20 w-full md:mt-28"
+        className="relative mt-auto w-full"
         aria-hidden
       >
         <svg viewBox="0 0 1000 205" className="block w-full" preserveAspectRatio="xMidYMid meet">
