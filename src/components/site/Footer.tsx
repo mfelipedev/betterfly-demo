@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/betterfly-logo.png.asset.json";
+import logo from "@/assets/betterfly-logo-clean.png.asset.json";
 
 const LINKS = [
   { label: "Instagram", href: "https://instagram.com/betterfly" },
