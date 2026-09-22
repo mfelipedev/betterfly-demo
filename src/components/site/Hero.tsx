@@ -49,7 +49,7 @@ export function Hero() {
               <span className="label-xs">Agência de marketing · desde 2017</span>
             </motion.span>
 
-            <h1 className="display-lg mt-8 max-w-[24ch] text-balance">
+            <h1 className="font-display mt-8 max-w-[26ch] text-[clamp(1.6rem,3.6vw,3.25rem)] leading-[1.02] font-medium tracking-[-0.03em] text-balance">
               <RevealWords text="Estratégia, conteúdo e produção" />{" "}
               <span className="text-acid">
                 <RevealWords text="que levam sua marca mais alto." delay={0.12} />
