@@ -54,29 +54,65 @@ export function Manifesto() {
         </div>
       </div>
 
-      {/* Story strip — a Betterfly em quatro tempos */}
-      <div ref={ref} className="mt-24 overflow-hidden">
-        <div className="mx-auto max-w-[1600px] px-5 md:px-10">
+      {/* A origem do nome — composição tipográfica */}
+      <div ref={ref} className="mx-auto mt-24 max-w-[1600px] px-5 md:mt-32 md:px-10">
+        <div className="flex items-baseline justify-between border-t border-border pt-8">
           <p className="label-xs">A origem do nome</p>
+          <motion.p style={{ opacity }} className="label-xs text-foreground/40">
+            2017 — hoje
+          </motion.p>
         </div>
-        <motion.div style={{ x }} className="mt-8 flex gap-4 px-5 md:gap-6 md:px-10">
-          {HISTORIA.map((item, i) => (
-            <figure
-              key={item.src}
-              className="group relative w-[68vw] shrink-0 overflow-hidden rounded-sm border border-border sm:w-[42vw] lg:w-[26vw]"
-            >
-              <img
-                src={item.src}
-                alt={item.alt}
-                loading="lazy"
-                className="aspect-[4/5] w-full bg-ink object-contain transition-transform duration-[1.2s] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
-              />
-              <figcaption className="pointer-events-none absolute bottom-3 left-3 label-xs">
-                0{i + 1}
-              </figcaption>
-            </figure>
-          ))}
-        </motion.div>
+
+        <div className="mt-12 grid gap-10 md:mt-16 md:grid-cols-12 md:gap-8">
+          <Reveal className="md:col-span-5">
+            <p className="label-xs text-foreground/40">01 — O começo</p>
+            <h3 className="mt-4 font-display text-[clamp(1.75rem,3vw,2.75rem)] leading-[1.05] tracking-[-0.03em]">
+              Nascemos <span className="text-outline">Butterfly</span>, em 2017.
+            </h3>
+            <p className="mt-5 max-w-[38ch] leading-relaxed text-foreground/65">
+              O nome vinha da metamorfose: marcas que chegavam de um jeito e saíam de outro. Com o
+              tempo, percebemos que faltava dizer o que realmente entregávamos.
+            </p>
+          </Reveal>
+
+          <div className="md:col-span-6 md:col-start-7">
+            <div className="grid grid-cols-2 gap-6 border-t border-border pt-8 md:gap-10">
+              <Reveal>
+                <p className="label-xs text-foreground/40">02</p>
+                <p className="mt-3 font-display text-[clamp(2.25rem,5vw,4rem)] leading-none tracking-[-0.04em] text-acid">
+                  Better
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-foreground/60">
+                  Do inglês, <span className="text-foreground">melhor</span>. O padrão que a marca
+                  passa a ocupar depois de cada ciclo.
+                </p>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <p className="label-xs text-foreground/40">03</p>
+                <p className="mt-3 font-display text-[clamp(2.25rem,5vw,4rem)] leading-none tracking-[-0.04em] text-outline-acid">
+                  Fly
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-foreground/60">
+                  Do inglês, <span className="text-foreground">voar</span>. A direção e a altitude
+                  que a presença digital ganha.
+                </p>
+              </Reveal>
+            </div>
+          </div>
+        </div>
+
+        <Reveal delay={0.15}>
+          <div className="mt-14 border-t border-border pt-10 md:mt-20">
+            <p className="label-xs text-foreground/40">04 — O que ficou</p>
+            <p className="mt-5 max-w-[30ch] font-display text-[clamp(1.5rem,3.4vw,3rem)] leading-[1.06] tracking-[-0.03em] md:max-w-[34ch]">
+              Ser o seu melhor voo no universo midiático.
+            </p>
+            <p className="mt-6 max-w-[46ch] leading-relaxed text-foreground/60">
+              Betterfly é a junção das duas palavras — e a promessa de que cada entrega deixe a marca
+              um patamar acima de onde começou.
+            </p>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
