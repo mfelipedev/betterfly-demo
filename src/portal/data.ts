@@ -284,6 +284,9 @@ export interface Seed {
   files: FileItem[];
   rules: TransferRule[];
   ai: AiSettings;
+  /** Até quando as notificações já foram lidas, por visão. */
+  readAt: { client: string; agency: string };
+  prefs: Record<string, boolean>;
 }
 
 export function buildSeed(now = new Date()): Seed {
@@ -1176,6 +1179,24 @@ export function buildSeed(now = new Date()): Seed {
       kind: "approved",
       contentId: "c10",
     },
+    {
+      id: "a6",
+      at: at(-6, 16),
+      text: "Resumo do alinhamento de campanha disponível em Arquivos",
+      kind: "system",
+    },
+    {
+      id: "a7",
+      at: at(-9, 11),
+      text: "Fotos selecionadas da captação Lifestyle Urbano disponíveis",
+      kind: "system",
+    },
+    {
+      id: "a8",
+      at: at(-14, 15),
+      text: "Relatório mensal de resultados publicado",
+      kind: "system",
+    },
   ];
 
   const MB = 1024 * 1024;
@@ -1396,5 +1417,14 @@ export function buildSeed(now = new Date()): Seed {
     files,
     rules,
     ai: { enabled: true, tone: "proximo", afterHours: true },
+    readAt: { client: at(-3), agency: at(-3) },
+    prefs: {
+      aprovacao: true,
+      mensagem: true,
+      agenda: true,
+      arquivo: false,
+      email: true,
+      whatsapp: false,
+    },
   };
 }

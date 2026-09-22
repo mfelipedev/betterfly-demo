@@ -34,7 +34,7 @@ import {
 } from "./data";
 import { fmt } from "./format";
 
-const STORAGE_KEY = "betterfly-demo-v2";
+const STORAGE_KEY = "betterfly-demo-v3";
 
 type Action =
   | { type: "replace"; state: Seed }
@@ -43,7 +43,8 @@ type Action =
   | { type: "activity"; item: Activity }
   | { type: "rule"; id: string; patch: Partial<TransferRule> }
   | { type: "ai"; patch: Partial<AiSettings> }
-  | { type: "file"; item: FileItem };
+  | { type: "file"; item: FileItem }
+  | { type: "patch"; patch: Partial<Seed> };
 
 function reducer(state: Seed, action: Action): Seed {
   switch (action.type) {
@@ -70,6 +71,8 @@ function reducer(state: Seed, action: Action): Seed {
       return { ...state, ai: { ...state.ai, ...action.patch } };
     case "file":
       return { ...state, files: [action.item, ...state.files] };
+    case "patch":
+      return { ...state, ...action.patch };
   }
 }
 
@@ -113,6 +116,8 @@ interface DemoApi {
   setAi: (patch: Partial<AiSettings>) => void;
   addFile: (clientId: string, folder: FolderId, a: Attachment, by: string) => void;
   logActivity: (text: string, kind: Activity["kind"]) => void;
+  markAllRead: (mode: "client" | "agency") => void;
+  setPref: (key: string, on: boolean) => void;
   reset: () => void;
 }
 
@@ -459,6 +464,17 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "activity", item: { id: newId("a"), at: nowIso(), text, kind } });
   }, []);
 
+  const markAllRead = useCallback((mode: "client" | "agency") => {
+    dispatch({
+      type: "patch",
+      patch: { readAt: { ...stateRef.current.readAt, [mode]: nowIso() } },
+    });
+  }, []);
+
+  const setPref = useCallback((key: string, on: boolean) => {
+    dispatch({ type: "patch", patch: { prefs: { ...stateRef.current.prefs, [key]: on } } });
+  }, []);
+
   const reset = useCallback(() => {
     timers.current.forEach(clearTimeout);
     timers.current = [];
@@ -481,6 +497,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       setAi,
       addFile,
       logActivity,
+      markAllRead,
+      setPref,
       reset,
     }),
     [
@@ -498,6 +516,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       setAi,
       addFile,
       logActivity,
+      markAllRead,
+      setPref,
       reset,
     ],
   );

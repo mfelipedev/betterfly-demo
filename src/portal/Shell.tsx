@@ -28,7 +28,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { DEMO_CLIENT, TEAM } from "./data";
 import { timeAgo } from "./format";
 import { useDemo, useStats } from "./store";
-import { AiMark, Avatar } from "./ui";
+import { useNotifications } from "./notifications";
+import { GlobalSearch } from "./Search";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Avatar, btn } from "./ui";
 
 type Mode = "client" | "agency";
 
@@ -92,6 +95,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
   const nav = useNav(mode);
   const [collapsed, setCollapsed] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -170,12 +174,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
             icon={UserRound}
             label="Perfil"
             collapsed={collapsed}
-            onClick={() =>
-              toast("Perfil", {
-                description:
-                  "Dados da conta e preferências de notificação entram na etapa 3 da demo.",
-              })
-            }
+            onClick={() => setProfileOpen(true)}
           />
           <Link
             to="/cliente"
@@ -243,6 +242,8 @@ export function PortalShell({ children }: { children: ReactNode }) {
         </button>
       </nav>
 
+      <ProfileDialog mode={mode} open={profileOpen} onOpenChange={setProfileOpen} />
+
       <AnimatePresence>
         {moreOpen && (
           <>
@@ -286,9 +287,19 @@ export function PortalShell({ children }: { children: ReactNode }) {
                   );
                 })}
               </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setMoreOpen(false);
+                  setProfileOpen(true);
+                }}
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-border py-3 text-sm text-bone/80"
+              >
+                <UserRound className="h-4 w-4" /> Perfil
+              </button>
               <Link
                 to="/cliente"
-                className="mt-4 flex items-center justify-center gap-2 py-2 text-sm text-bone/50"
+                className="mt-2 flex items-center justify-center gap-2 py-2 text-sm text-bone/50"
               >
                 <LogOut className="h-4 w-4" /> Sair da demonstração
               </Link>
@@ -297,6 +308,79 @@ export function PortalShell({ children }: { children: ReactNode }) {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function ProfileDialog({
+  mode,
+  open,
+  onOpenChange,
+}: {
+  mode: Mode;
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+}) {
+  const client = mode === "client";
+  const rows: [string, string][] = client
+    ? [
+        ["Nome", DEMO_CLIENT.contact],
+        ["E-mail", DEMO_CLIENT.email],
+        ["Empresa", DEMO_CLIENT.name],
+        ["Plano", DEMO_CLIENT.plan],
+        ["Responsável", TEAM[DEMO_CLIENT.owner].name],
+      ]
+    : [
+        ["Nome", TEAM.marina.name],
+        ["E-mail", "marina@betterfly.com.br"],
+        ["Função", `${TEAM.marina.role} · Administradora`],
+        ["Clientes", "7 sob responsabilidade"],
+      ];
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md border-border bg-[oklch(0.15_0_0)] p-0">
+        <div className="flex items-center gap-4 border-b border-border px-6 py-5">
+          <Avatar
+            initials={client ? "LA" : "MS"}
+            tone={client ? "acid" : "bone"}
+            className="h-12 w-12 text-sm"
+          />
+          <div>
+            <DialogTitle className="font-display text-xl font-medium">
+              {client ? DEMO_CLIENT.contact : TEAM.marina.name}
+            </DialogTitle>
+            <p className="text-xs text-bone/50">{client ? DEMO_CLIENT.name : "Equipe Betterfly"}</p>
+          </div>
+        </div>
+        <dl className="space-y-3 px-6 py-5 text-sm">
+          {rows.map(([k, v]) => (
+            <div key={k} className="flex justify-between gap-4">
+              <dt className="text-bone/45">{k}</dt>
+              <dd className="text-right">{v}</dd>
+            </div>
+          ))}
+        </dl>
+        <div className="flex flex-wrap gap-2 border-t border-border px-6 py-4">
+          <Link
+            to={client ? "/cliente/notificacoes" : "/cliente/agencia/notificacoes"}
+            onClick={() => onOpenChange(false)}
+            className={btn.ghost}
+          >
+            <Bell className="h-3.5 w-3.5" /> Notificações
+          </Link>
+          <button
+            type="button"
+            className={btn.ghost}
+            onClick={() =>
+              toast("Segurança da conta", {
+                description: "Na versão final: troca de senha e login em dois fatores.",
+              })
+            }
+          >
+            Alterar senha
+          </button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -460,6 +544,8 @@ function TopBar({ mode }: { mode: Mode }) {
           </div>
         </div>
 
+        <GlobalSearch mode={mode} />
+
         <NotificationsBell mode={mode} />
 
         <button
@@ -483,80 +569,75 @@ function TopBar({ mode }: { mode: Mode }) {
 }
 
 function NotificationsBell({ mode }: { mode: Mode }) {
-  const { state } = useDemo();
-  const stats = useStats();
-  const [seen, setSeen] = useState(0);
-
-  const items =
-    mode === "client"
-      ? [
-          ...(stats.pending.length
-            ? [
-                {
-                  id: "p",
-                  text: `${stats.pending.length} conteúdos precisam da sua aprovação`,
-                  at: new Date().toISOString(),
-                  to: "/cliente/aprovacoes",
-                },
-              ]
-            : []),
-          ...state.activity.slice(0, 5).map((a) => ({
-            id: a.id,
-            text: a.text,
-            at: a.at,
-            to: a.contentId
-              ? `/cliente/conteudo/${a.contentId}`
-              : a.kind === "message"
-                ? "/cliente/mensagens"
-                : "/cliente/conteudo",
-          })),
-        ]
-      : state.convos
-          .filter((c) => c.status === "aguardando")
-          .map((c) => ({
-            id: c.id,
-            text: `${state.clients.find((cl) => cl.id === c.clientId)?.name} aguarda atendimento: ${c.subject}`,
-            at: c.messages.at(-1)!.at,
-            to: "/cliente/agencia/inbox",
-          }));
-
-  const count = Math.max(0, items.length - seen);
+  const { markAllRead } = useDemo();
+  const { items, isUnread, unread } = useNotifications(mode);
+  const [open, setOpen] = useState(false);
+  const all = mode === "client" ? "/cliente/notificacoes" : "/cliente/agencia/notificacoes";
 
   return (
-    <Popover onOpenChange={(o) => o && setSeen(items.length)}>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         className="relative flex h-9 w-9 items-center justify-center rounded-full text-bone/60 transition-colors hover:bg-bone/[0.06] hover:text-bone"
-        aria-label="Notificações"
+        aria-label={unread ? `Notificações, ${unread} não lidas` : "Notificações"}
       >
         <Bell className="h-4 w-4" />
-        {count > 0 && (
-          <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-acid ring-2 ring-background" />
+        {unread > 0 && (
+          <span className="absolute top-1 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-acid px-1 text-[0.55rem] font-bold text-ink ring-2 ring-background">
+            {unread}
+          </span>
         )}
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-[340px] border-border bg-[oklch(0.16_0_0)] p-0">
+      <PopoverContent
+        align="end"
+        className="w-[min(340px,calc(100vw-24px))] border-border bg-[oklch(0.16_0_0)] p-0"
+      >
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <p className="label-xs !text-bone/70">Notificações</p>
-          {mode === "agency" && <AiMark className="h-5 w-5" />}
+          {unread > 0 && (
+            <button type="button" onClick={() => markAllRead(mode)} className={btn.subtle}>
+              Marcar como lidas
+            </button>
+          )}
         </div>
         <ul className="max-h-[360px] overflow-y-auto">
           {items.length === 0 && (
             <li className="px-4 py-8 text-center text-sm text-bone/45">Tudo em dia por aqui.</li>
           )}
-          {items.map((n) => (
+          {items.slice(0, 7).map((n) => (
             <li key={n.id}>
               <Link
                 to={n.to}
+                onClick={() => setOpen(false)}
                 className="flex gap-3 px-4 py-3 transition-colors hover:bg-bone/[0.04]"
               >
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-acid" />
+                <span
+                  className={cn(
+                    "mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full",
+                    isUnread(n) ? (n.urgent ? "bg-orange-400" : "bg-acid") : "bg-bone/15",
+                  )}
+                />
                 <span className="min-w-0">
-                  <span className="block text-sm leading-snug text-bone/85">{n.text}</span>
+                  <span
+                    className={cn(
+                      "block text-sm leading-snug",
+                      isUnread(n) ? "text-bone" : "text-bone/60",
+                    )}
+                  >
+                    {n.text}
+                  </span>
                   <span className="mt-1 block text-[0.7rem] text-bone/40">{timeAgo(n.at)}</span>
                 </span>
               </Link>
             </li>
           ))}
         </ul>
+        <Link
+          to={all}
+          onClick={() => setOpen(false)}
+          className="block border-t border-border px-4 py-3 text-center text-xs text-bone/60 transition-colors hover:text-acid"
+        >
+          Ver todas as notificações
+        </Link>
       </PopoverContent>
     </Popover>
   );
