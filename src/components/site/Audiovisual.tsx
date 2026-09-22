@@ -15,7 +15,7 @@ export function Audiovisual() {
   return (
     <section className="relative py-24 md:py-36">
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
-        <SectionLabel index="03">Foto &amp; vídeo</SectionLabel>
+        <SectionLabel index="04">Foto &amp; vídeo</SectionLabel>
         <h2 className="display-lg mt-8 max-w-[20ch]">
           <RevealWords text="A imagem da sua marca" />{" "}
           <span className="text-acid">

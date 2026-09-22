@@ -11,7 +11,7 @@ export function Origin() {
   return (
     <section id="origem" className="relative py-24 md:py-36">
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
-        <SectionLabel index="06">A origem do nome</SectionLabel>
+        <SectionLabel index="02">A origem do nome</SectionLabel>
       </div>
 
       <div ref={ref} className="mx-auto mt-10 max-w-[1600px] px-5 md:mt-14 md:px-10">

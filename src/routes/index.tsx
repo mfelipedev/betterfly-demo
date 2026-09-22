@@ -36,11 +36,11 @@ function Index() {
       <main>
         <Hero />
         <Manifesto />
+        <Origin />
         <Services />
         <Audiovisual />
         <Process />
         <Cases />
-        <Origin />
         <Experience />
         <CTA />
       </main>

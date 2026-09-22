@@ -41,7 +41,7 @@ export function Cases() {
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <SectionLabel index="05">Projetos</SectionLabel>
+            <SectionLabel index="06">Projetos</SectionLabel>
             <h2 className="display-lg mt-8 max-w-[16ch]">Direção aplicada</h2>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-foreground/55">
