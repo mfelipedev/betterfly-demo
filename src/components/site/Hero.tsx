@@ -152,7 +152,7 @@ export function Hero() {
             fill="var(--bone)"
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "152px",
+              fontSize: "205px",
               fontWeight: 500,
             }}
           >
