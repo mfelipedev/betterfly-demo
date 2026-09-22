@@ -56,7 +56,7 @@ export function Experience() {
               </div>
 
               <p className="mt-8 font-display text-3xl leading-tight md:text-4xl">
-                Sua marca em um<span className="text-acid">.</span> só painel
+                Sua marca em um só painel<span className="text-acid">.</span>
               </p>
 
               <ul className="mt-8 border-t border-border">
@@ -82,7 +82,7 @@ export function Experience() {
                   </span>
                 </Link>
                 <p className="text-xs text-foreground/40">
-                  O ambiente está em desenvolvimento nesta fase.
+                  Um ambiente próprio para nossos clientes
                 </p>
               </div>
             </div>
