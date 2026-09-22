@@ -42,15 +42,16 @@ export function Header() {
         <div className="group hidden items-center justify-end lg:flex">
           <nav
             aria-label="Navegação principal"
-            className="flex max-w-0 items-center overflow-hidden opacity-0 transition-[max-width,opacity] duration-600 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:max-w-[560px] group-hover:opacity-100 group-focus-within:max-w-[560px] group-focus-within:opacity-100"
+            className="flex max-w-0 items-center overflow-hidden opacity-0 transition-[max-width,opacity] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:max-w-[560px] group-hover:opacity-100 group-focus-within:max-w-[560px] group-focus-within:opacity-100"
           >
             <span className="flex items-center gap-8 pr-8 whitespace-nowrap">
               {NAV.map((item, i) => (
                 <a
                   key={item.href}
                   href={item.href}
-                  style={{ transitionDelay: `${80 + i * 55}ms` }}
-                  className="hover-acid relative translate-x-3 text-sm text-foreground/75 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-0 group-focus-within:translate-x-0"
+                  style={{ transitionDelay: `${180 + i * 90}ms` }}
+                  className="hover-acid relative translate-x-4 text-sm text-foreground/75 transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0 group-focus-within:translate-x-0"
+
                 >
                   {item.label}
                 </a>
