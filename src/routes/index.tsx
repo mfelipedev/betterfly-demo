@@ -10,7 +10,7 @@ import { Experience } from "@/components/site/Experience";
 import { CTA } from "@/components/site/CTA";
 import { Footer } from "@/components/site/Footer";
 
-const TITLE = "Betterfly — Branding, conteúdo & performance";
+const TITLE = "Betterfly: Branding, conteúdo & performance";
 const DESC =
   "Agência de marketing com estratégia, social media, tráfego pago e produção de foto e vídeo para marcas que decidiram evoluir.";
 
