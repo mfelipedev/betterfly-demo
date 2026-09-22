@@ -11,6 +11,17 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ClienteRouteImport } from './routes/cliente'
+import { Route as ClienteIndexRouteImport } from './routes/cliente/index'
+import { Route as ClientePortalRouteImport } from './routes/cliente/_portal'
+import { Route as ClientePortalSecaoRouteImport } from './routes/cliente/_portal/$secao'
+import { Route as ClientePortalAprovacoesRouteImport } from './routes/cliente/_portal/aprovacoes'
+import { Route as ClientePortalInicioRouteImport } from './routes/cliente/_portal/inicio'
+import { Route as ClientePortalMensagensRouteImport } from './routes/cliente/_portal/mensagens'
+import { Route as ClientePortalAgenciaIndexRouteImport } from './routes/cliente/_portal/agencia.index'
+import { Route as ClientePortalAgenciaSecaoRouteImport } from './routes/cliente/_portal/agencia.$secao'
+import { Route as ClientePortalAgenciaInboxRouteImport } from './routes/cliente/_portal/agencia.inbox'
+import { Route as ClientePortalConteudoIndexRouteImport } from './routes/cliente/_portal/conteudo.index'
+import { Route as ClientePortalConteudoIdRouteImport } from './routes/cliente/_portal/conteudo.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +33,156 @@ const ClienteRoute = ClienteRouteImport.update({
   path: '/cliente',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClienteIndexRoute = ClienteIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ClienteRoute,
+} as any)
+const ClientePortalRoute = ClientePortalRouteImport.update({
+  id: '/_portal',
+  getParentRoute: () => ClienteRoute,
+} as any)
+const ClientePortalSecaoRoute = ClientePortalSecaoRouteImport.update({
+  id: '/$secao',
+  path: '/$secao',
+  getParentRoute: () => ClientePortalRoute,
+} as any)
+const ClientePortalAprovacoesRoute = ClientePortalAprovacoesRouteImport.update({
+  id: '/aprovacoes',
+  path: '/aprovacoes',
+  getParentRoute: () => ClientePortalRoute,
+} as any)
+const ClientePortalInicioRoute = ClientePortalInicioRouteImport.update({
+  id: '/inicio',
+  path: '/inicio',
+  getParentRoute: () => ClientePortalRoute,
+} as any)
+const ClientePortalMensagensRoute = ClientePortalMensagensRouteImport.update({
+  id: '/mensagens',
+  path: '/mensagens',
+  getParentRoute: () => ClientePortalRoute,
+} as any)
+const ClientePortalAgenciaIndexRoute =
+  ClientePortalAgenciaIndexRouteImport.update({
+    id: '/agencia/',
+    path: '/agencia/',
+    getParentRoute: () => ClientePortalRoute,
+  } as any)
+const ClientePortalAgenciaSecaoRoute =
+  ClientePortalAgenciaSecaoRouteImport.update({
+    id: '/agencia/$secao',
+    path: '/agencia/$secao',
+    getParentRoute: () => ClientePortalRoute,
+  } as any)
+const ClientePortalAgenciaInboxRoute =
+  ClientePortalAgenciaInboxRouteImport.update({
+    id: '/agencia/inbox',
+    path: '/agencia/inbox',
+    getParentRoute: () => ClientePortalRoute,
+  } as any)
+const ClientePortalConteudoIndexRoute =
+  ClientePortalConteudoIndexRouteImport.update({
+    id: '/conteudo/',
+    path: '/conteudo/',
+    getParentRoute: () => ClientePortalRoute,
+  } as any)
+const ClientePortalConteudoIdRoute = ClientePortalConteudoIdRouteImport.update({
+  id: '/conteudo/$id',
+  path: '/conteudo/$id',
+  getParentRoute: () => ClientePortalRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/cliente': typeof ClienteRoute
+  '/cliente': typeof ClienteRouteWithChildren
+  '/cliente/': typeof ClienteIndexRoute
+  '/cliente/$secao': typeof ClientePortalSecaoRoute
+  '/cliente/aprovacoes': typeof ClientePortalAprovacoesRoute
+  '/cliente/inicio': typeof ClientePortalInicioRoute
+  '/cliente/mensagens': typeof ClientePortalMensagensRoute
+  '/cliente/agencia/$secao': typeof ClientePortalAgenciaSecaoRoute
+  '/cliente/agencia/inbox': typeof ClientePortalAgenciaInboxRoute
+  '/cliente/conteudo/$id': typeof ClientePortalConteudoIdRoute
+  '/cliente/agencia/': typeof ClientePortalAgenciaIndexRoute
+  '/cliente/conteudo/': typeof ClientePortalConteudoIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/cliente': typeof ClienteRoute
+  '/cliente': typeof ClienteIndexRoute
+  '/cliente/$secao': typeof ClientePortalSecaoRoute
+  '/cliente/aprovacoes': typeof ClientePortalAprovacoesRoute
+  '/cliente/inicio': typeof ClientePortalInicioRoute
+  '/cliente/mensagens': typeof ClientePortalMensagensRoute
+  '/cliente/agencia/$secao': typeof ClientePortalAgenciaSecaoRoute
+  '/cliente/agencia/inbox': typeof ClientePortalAgenciaInboxRoute
+  '/cliente/conteudo/$id': typeof ClientePortalConteudoIdRoute
+  '/cliente/agencia': typeof ClientePortalAgenciaIndexRoute
+  '/cliente/conteudo': typeof ClientePortalConteudoIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/cliente': typeof ClienteRoute
+  '/cliente': typeof ClienteRouteWithChildren
+  '/cliente/_portal': typeof ClientePortalRouteWithChildren
+  '/cliente/': typeof ClienteIndexRoute
+  '/cliente/_portal/$secao': typeof ClientePortalSecaoRoute
+  '/cliente/_portal/aprovacoes': typeof ClientePortalAprovacoesRoute
+  '/cliente/_portal/inicio': typeof ClientePortalInicioRoute
+  '/cliente/_portal/mensagens': typeof ClientePortalMensagensRoute
+  '/cliente/_portal/agencia/$secao': typeof ClientePortalAgenciaSecaoRoute
+  '/cliente/_portal/agencia/inbox': typeof ClientePortalAgenciaInboxRoute
+  '/cliente/_portal/conteudo/$id': typeof ClientePortalConteudoIdRoute
+  '/cliente/_portal/agencia/': typeof ClientePortalAgenciaIndexRoute
+  '/cliente/_portal/conteudo/': typeof ClientePortalConteudoIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cliente'
+  fullPaths:
+    | '/'
+    | '/cliente'
+    | '/cliente/'
+    | '/cliente/$secao'
+    | '/cliente/aprovacoes'
+    | '/cliente/inicio'
+    | '/cliente/mensagens'
+    | '/cliente/agencia/$secao'
+    | '/cliente/agencia/inbox'
+    | '/cliente/conteudo/$id'
+    | '/cliente/agencia/'
+    | '/cliente/conteudo/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cliente'
-  id: '__root__' | '/' | '/cliente'
+  to:
+    | '/'
+    | '/cliente'
+    | '/cliente/$secao'
+    | '/cliente/aprovacoes'
+    | '/cliente/inicio'
+    | '/cliente/mensagens'
+    | '/cliente/agencia/$secao'
+    | '/cliente/agencia/inbox'
+    | '/cliente/conteudo/$id'
+    | '/cliente/agencia'
+    | '/cliente/conteudo'
+  id:
+    | '__root__'
+    | '/'
+    | '/cliente'
+    | '/cliente/_portal'
+    | '/cliente/'
+    | '/cliente/_portal/$secao'
+    | '/cliente/_portal/aprovacoes'
+    | '/cliente/_portal/inicio'
+    | '/cliente/_portal/mensagens'
+    | '/cliente/_portal/agencia/$secao'
+    | '/cliente/_portal/agencia/inbox'
+    | '/cliente/_portal/conteudo/$id'
+    | '/cliente/_portal/agencia/'
+    | '/cliente/_portal/conteudo/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ClienteRoute: typeof ClienteRoute
+  ClienteRoute: typeof ClienteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +201,130 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClienteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cliente/': {
+      id: '/cliente/'
+      path: '/'
+      fullPath: '/cliente/'
+      preLoaderRoute: typeof ClienteIndexRouteImport
+      parentRoute: typeof ClienteRoute
+    }
+    '/cliente/_portal': {
+      id: '/cliente/_portal'
+      path: ''
+      fullPath: '/cliente'
+      preLoaderRoute: typeof ClientePortalRouteImport
+      parentRoute: typeof ClienteRoute
+    }
+    '/cliente/_portal/$secao': {
+      id: '/cliente/_portal/$secao'
+      path: '/$secao'
+      fullPath: '/cliente/$secao'
+      preLoaderRoute: typeof ClientePortalSecaoRouteImport
+      parentRoute: typeof ClientePortalRoute
+    }
+    '/cliente/_portal/aprovacoes': {
+      id: '/cliente/_portal/aprovacoes'
+      path: '/aprovacoes'
+      fullPath: '/cliente/aprovacoes'
+      preLoaderRoute: typeof ClientePortalAprovacoesRouteImport
+      parentRoute: typeof ClientePortalRoute
+    }
+    '/cliente/_portal/inicio': {
+      id: '/cliente/_portal/inicio'
+      path: '/inicio'
+      fullPath: '/cliente/inicio'
+      preLoaderRoute: typeof ClientePortalInicioRouteImport
+      parentRoute: typeof ClientePortalRoute
+    }
+    '/cliente/_portal/mensagens': {
+      id: '/cliente/_portal/mensagens'
+      path: '/mensagens'
+      fullPath: '/cliente/mensagens'
+      preLoaderRoute: typeof ClientePortalMensagensRouteImport
+      parentRoute: typeof ClientePortalRoute
+    }
+    '/cliente/_portal/agencia/': {
+      id: '/cliente/_portal/agencia/'
+      path: '/agencia'
+      fullPath: '/cliente/agencia/'
+      preLoaderRoute: typeof ClientePortalAgenciaIndexRouteImport
+      parentRoute: typeof ClientePortalRoute
+    }
+    '/cliente/_portal/agencia/$secao': {
+      id: '/cliente/_portal/agencia/$secao'
+      path: '/agencia/$secao'
+      fullPath: '/cliente/agencia/$secao'
+      preLoaderRoute: typeof ClientePortalAgenciaSecaoRouteImport
+      parentRoute: typeof ClientePortalRoute
+    }
+    '/cliente/_portal/agencia/inbox': {
+      id: '/cliente/_portal/agencia/inbox'
+      path: '/agencia/inbox'
+      fullPath: '/cliente/agencia/inbox'
+      preLoaderRoute: typeof ClientePortalAgenciaInboxRouteImport
+      parentRoute: typeof ClientePortalRoute
+    }
+    '/cliente/_portal/conteudo/': {
+      id: '/cliente/_portal/conteudo/'
+      path: '/conteudo'
+      fullPath: '/cliente/conteudo/'
+      preLoaderRoute: typeof ClientePortalConteudoIndexRouteImport
+      parentRoute: typeof ClientePortalRoute
+    }
+    '/cliente/_portal/conteudo/$id': {
+      id: '/cliente/_portal/conteudo/$id'
+      path: '/conteudo/$id'
+      fullPath: '/cliente/conteudo/$id'
+      preLoaderRoute: typeof ClientePortalConteudoIdRouteImport
+      parentRoute: typeof ClientePortalRoute
+    }
   }
 }
 
+interface ClientePortalRouteChildren {
+  ClientePortalSecaoRoute: typeof ClientePortalSecaoRoute
+  ClientePortalAprovacoesRoute: typeof ClientePortalAprovacoesRoute
+  ClientePortalInicioRoute: typeof ClientePortalInicioRoute
+  ClientePortalMensagensRoute: typeof ClientePortalMensagensRoute
+  ClientePortalAgenciaSecaoRoute: typeof ClientePortalAgenciaSecaoRoute
+  ClientePortalAgenciaInboxRoute: typeof ClientePortalAgenciaInboxRoute
+  ClientePortalConteudoIdRoute: typeof ClientePortalConteudoIdRoute
+  ClientePortalAgenciaIndexRoute: typeof ClientePortalAgenciaIndexRoute
+  ClientePortalConteudoIndexRoute: typeof ClientePortalConteudoIndexRoute
+}
+
+const ClientePortalRouteChildren: ClientePortalRouteChildren = {
+  ClientePortalSecaoRoute: ClientePortalSecaoRoute,
+  ClientePortalAprovacoesRoute: ClientePortalAprovacoesRoute,
+  ClientePortalInicioRoute: ClientePortalInicioRoute,
+  ClientePortalMensagensRoute: ClientePortalMensagensRoute,
+  ClientePortalAgenciaSecaoRoute: ClientePortalAgenciaSecaoRoute,
+  ClientePortalAgenciaInboxRoute: ClientePortalAgenciaInboxRoute,
+  ClientePortalConteudoIdRoute: ClientePortalConteudoIdRoute,
+  ClientePortalAgenciaIndexRoute: ClientePortalAgenciaIndexRoute,
+  ClientePortalConteudoIndexRoute: ClientePortalConteudoIndexRoute,
+}
+
+const ClientePortalRouteWithChildren = ClientePortalRoute._addFileChildren(
+  ClientePortalRouteChildren,
+)
+
+interface ClienteRouteChildren {
+  ClientePortalRoute: typeof ClientePortalRouteWithChildren
+  ClienteIndexRoute: typeof ClienteIndexRoute
+}
+
+const ClienteRouteChildren: ClienteRouteChildren = {
+  ClientePortalRoute: ClientePortalRouteWithChildren,
+  ClienteIndexRoute: ClienteIndexRoute,
+}
+
+const ClienteRouteWithChildren =
+  ClienteRoute._addFileChildren(ClienteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ClienteRoute: ClienteRoute,
+  ClienteRoute: ClienteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
