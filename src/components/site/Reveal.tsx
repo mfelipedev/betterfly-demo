@@ -1,4 +1,4 @@
-import { motion, useInView, useReducedMotion } from "motion/react";
+import { motion, useInView, useMotionTemplate, useReducedMotion, useScroll, useTransform, type MotionValue } from "motion/react";
 import { useRef, type ReactNode } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -87,5 +87,83 @@ export function SectionLabel({ index, children }: { index: string; children: Rea
       <span className="h-px w-8 bg-acid" />
       <span className="label-xs">{children}</span>
     </div>
+  );
+}
+
+/**
+ * Scroll-linked reveal: each word brightens as the phrase travels up the viewport.
+ */
+export function ScrollWords({
+  segments,
+  className,
+}: {
+  segments: { text: string; dim?: boolean }[];
+  className?: string;
+}) {
+  const reduce = useReducedMotion();
+  const ref = useRef<HTMLHeadingElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 0.9", "start 0.35"],
+  });
+
+  const words = segments.flatMap((segment) =>
+    segment.text.split(" ").map((word) => ({ word, dim: segment.dim ?? false })),
+  );
+  const total = words.length;
+
+  return (
+    <h2 ref={ref} className={className}>
+      {words.map((item, i) => {
+        const start = (i / total) * 0.75;
+        const end = start + 0.35;
+        return (
+          <ScrollWord
+            key={`${item.word}-${i}`}
+            word={item.word}
+            dim={item.dim}
+            progress={scrollYProgress}
+            start={start}
+            end={end}
+            reduce={!!reduce}
+          />
+        );
+      })}
+    </h2>
+  );
+}
+
+function ScrollWord({
+  word,
+  dim,
+  progress,
+  start,
+  end,
+  reduce,
+}: {
+  word: string;
+  dim: boolean;
+  progress: MotionValue<number>;
+  start: number;
+  end: number;
+  reduce: boolean;
+}) {
+  const base = dim ? 0.35 : 1;
+  const opacity = useTransform(progress, [start, end], [0.12, base]);
+  const y = useTransform(progress, [start, end], ["0.35em", "0em"]);
+  const blur = useTransform(progress, [start, end], ["6px", "0px"]);
+  const filter = useMotionTemplate`blur(${blur})`;
+
+  if (reduce) {
+    return <span style={{ opacity: base }}>{word}{"\u00A0"}</span>;
+  }
+
+  return (
+    <span className="-mb-[0.18em] inline-block pb-[0.18em] align-bottom">
+      <motion.span className="inline-block" style={{ opacity, y, filter }}>
+        {word}
+        {"\u00A0"}
+      </motion.span>
+    </span>
   );
 }
