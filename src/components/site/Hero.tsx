@@ -178,7 +178,7 @@ export function Hero() {
       {/* label row */}
       <div className="relative border-t border-border">
         <div className="mx-auto hidden w-full max-w-[1600px] items-center justify-between px-10 py-5 md:flex">
-          {FRENTES.map((f, idx) => (
+          {FRENTES.map((f) => (
             <span key={f} className="flex items-center gap-8">
               <span className="h-1 w-1 rounded-full bg-acid/60" aria-hidden />
               <span className="text-[0.68rem] tracking-[0.2em] text-foreground/55 uppercase">
