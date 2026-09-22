@@ -165,7 +165,7 @@ export function Hero() {
           </text>
         </svg>
       </motion.div>
-
+    </section>
 
       {/* label row */}
       <div className="relative mt-8 border-t border-border">
