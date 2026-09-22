@@ -200,7 +200,7 @@ export function Hero() {
           </div>
         </div>
         <p className="sr-only">
-          Frentes de atuação: marketing, social media, tráfego pago, foto e vídeo e branding.
+          Frentes de atuação: marketing, social media, tráfego pago, audiovisual e branding.
         </p>
       </div>
     </>
