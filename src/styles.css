@@ -142,8 +142,82 @@
   }
 }
 
+@utility text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--bone) 45%, transparent);
+}
+
+@utility text-outline-acid {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--acid);
+}
+
+@utility hud-corner {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: color-mix(in oklab, var(--acid) 70%, transparent);
+}
+
+@keyframes bf-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@utility marquee-track {
+  display: flex;
+  width: max-content;
+  animation: bf-marquee 38s linear infinite;
+}
+
+@keyframes bf-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--acid) 55%, transparent);
+  }
+  50% {
+    opacity: 0.55;
+    box-shadow: 0 0 0 6px color-mix(in oklab, var(--acid) 0%, transparent);
+  }
+}
+
+@utility signal-dot {
+  animation: bf-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes bf-scan {
+  0% {
+    transform: translateY(-10%);
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110%);
+    opacity: 0;
+  }
+}
+
+@utility scanline {
+  animation: bf-scan 7s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
+
+  .marquee-track,
+  .signal-dot,
+  .scanline {
+    animation: none;
+  }
 }
+
