@@ -1,23 +1,12 @@
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { Reveal, RevealWords, SectionLabel } from "./Reveal";
-import h1 from "@/assets/historia-1.png.asset.json";
-import h2 from "@/assets/historia-2.png.asset.json";
-import h3 from "@/assets/historia-3.png.asset.json";
-import h4 from "@/assets/historia-4.png.asset.json";
-
-const HISTORIA = [
-  { src: h1.url, alt: "Em 2017 a agência nasceu com o nome Butterfly" },
-  { src: h2.url, alt: "‘Better’ vem do inglês e significa melhor" },
-  { src: h3.url, alt: "‘Fly’ vem do inglês e significa voar" },
-  { src: h4.url, alt: "Queríamos ser o seu melhor voo no universo midiático" },
-];
 
 export function Manifesto() {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const x = useTransform(scrollYProgress, [0, 1], ["8%", reduce ? "8%" : "0%"]);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
+  const opacity = useTransform(scrollYProgress, [0, 1], [reduce ? 1 : 0.2, 1]);
 
   return (
     <section id="sobre" className="relative py-24 md:py-36">
