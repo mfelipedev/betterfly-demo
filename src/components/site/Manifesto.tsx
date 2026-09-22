@@ -15,27 +15,30 @@ export function Manifesto() {
           ]}
         />
 
-        <div className="mt-14 grid gap-12 border-t border-border pt-10 md:grid-cols-12">
-          <Reveal className="md:col-span-5">
-            <p className="text-lg leading-relaxed text-foreground/75">
-              Postar todos os dias não move uma marca. O que move é decisão: saber onde você está,
-              onde quer chegar e o que precisa mudar no caminho.
-            </p>
-          </Reveal>
-          <Reveal delay={0.1} className="md:col-span-4 md:col-start-7">
-            <p className="leading-relaxed text-foreground/60">
-              A Betterfly trabalha em ciclos de evolução. Cada mês a marca sai de um patamar e entra
-              em outro, com estética própria, narrativa clara e presença consistente nos lugares em
-              que decide estar.
-            </p>
-          </Reveal>
-          <Reveal delay={0.2} className="md:col-span-2 md:col-start-11">
-            <p className="label-xs">Desde</p>
-            <p className="mt-2 font-display text-5xl">2017</p>
-            <p className="mt-3 text-sm text-foreground/50">9 anos acompanhando jornadas de marca.</p>
-          </Reveal>
-        </div>
+        <QuoteRow />
       </div>
     </section>
+  );
+}
+
+/** Citação em destaque com o texto de apoio ao lado. */
+function QuoteRow() {
+  return (
+    <div className="mt-14 grid gap-10 border-t border-border pt-10 md:grid-cols-12 md:gap-8">
+      <Reveal className="md:col-span-7">
+        <p className="font-display text-[clamp(1.75rem,3.4vw,3.25rem)] leading-[1.08] tracking-[-0.03em]">
+          Postar todos os dias não move uma marca. O que move é <span className="text-acid">decisão</span>.
+        </p>
+      </Reveal>
+      <Reveal delay={0.1} className="md:col-span-4 md:col-start-9 md:pt-2">
+        <p className="text-lg leading-relaxed text-foreground/75">
+          Saber onde você está, onde quer chegar e o que precisa mudar no caminho.
+        </p>
+        <p className="mt-5 leading-relaxed text-foreground/50">
+          A Betterfly trabalha em ciclos de evolução, com estética própria, narrativa clara e
+          presença consistente nos lugares em que a marca decide estar.
+        </p>
+      </Reveal>
+    </div>
   );
 }
