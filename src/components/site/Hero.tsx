@@ -141,9 +141,10 @@ export function Hero() {
           className="mt-20 md:mt-28"
           aria-hidden
         >
-          <p className="font-display leading-[0.8] font-medium tracking-[-0.05em] text-[19vw] whitespace-nowrap">
+          <p className="font-display pb-[0.12em] leading-[0.8] font-medium tracking-[-0.05em] text-[19vw] whitespace-nowrap">
             Betterfly<span className="text-acid">.</span>
           </p>
+
         </motion.div>
       </div>
 
