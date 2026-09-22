@@ -13,13 +13,15 @@ export function Manifesto() {
       <div className="mx-auto max-w-[1600px] px-5 md:px-10">
         <SectionLabel index="01">Manifesto</SectionLabel>
 
-        <h2 className="display-lg mt-10 max-w-[22ch]">
-          <RevealWords text="Marketing não é" />{" "}
-          <span className="text-foreground/35">
-            <RevealWords text="publicar conteúdo." delay={0.1} />
-          </span>{" "}
-          <RevealWords text="É construir direção." delay={0.2} />
-        </h2>
+        <ScrollWords
+          className="display-lg mt-10 max-w-[22ch]"
+          segments={[
+            { text: "Marketing não é" },
+            { text: "publicar conteúdo.", dim: true },
+            { text: "É construir direção." },
+          ]}
+        />
+
 
         <div className="mt-14 grid gap-12 border-t border-border pt-10 md:grid-cols-12">
           <Reveal className="md:col-span-5">
