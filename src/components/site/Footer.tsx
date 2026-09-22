@@ -16,8 +16,8 @@ export function Footer() {
             <img
               src={logo.url}
               alt="Betterfly"
-              width={1670}
-              height={940}
+              width={1003}
+              height={464}
               loading="lazy"
               className="h-10 w-auto md:h-12"
             />
