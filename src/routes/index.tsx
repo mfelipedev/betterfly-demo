@@ -40,8 +40,8 @@ function Index() {
         <Audiovisual />
         <Process />
         <Cases />
-        <Experience />
         <Origin />
+        <Experience />
         <CTA />
       </main>
       <Footer />
