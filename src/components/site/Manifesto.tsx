@@ -17,7 +17,7 @@ export function Manifesto() {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const x = useTransform(scrollYProgress, [0, 1], ["2%", reduce ? "2%" : "-14%"]);
+  const x = useTransform(scrollYProgress, [0, 1], ["8%", reduce ? "8%" : "0%"]);
 
   return (
     <section id="sobre" className="relative py-24 md:py-36">
@@ -69,7 +69,7 @@ export function Manifesto() {
                 src={item.src}
                 alt={item.alt}
                 loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
+                className="aspect-[4/5] w-full bg-ink object-contain transition-transform duration-[1.2s] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
               />
               <figcaption className="pointer-events-none absolute bottom-3 left-3 label-xs">
                 0{i + 1}
