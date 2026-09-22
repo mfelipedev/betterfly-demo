@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/betterfly-logo.png.asset.json";
+import logo from "@/assets/betterfly-logo-clean.png.asset.json";
 
 const LINKS = [
   { label: "Instagram", href: "https://instagram.com/betterfly" },
@@ -16,8 +16,8 @@ export function Footer() {
             <img
               src={logo.url}
               alt="Betterfly"
-              width={1670}
-              height={940}
+              width={1003}
+              height={464}
               loading="lazy"
               className="h-10 w-auto md:h-12"
             />
