@@ -26,7 +26,7 @@ export function Hero() {
     <>
     <section
       id="inicio"
-      className="relative flex min-h-svh flex-col overflow-hidden pt-28 md:pt-32"
+      className="relative flex min-h-svh flex-col overflow-hidden pt-24 md:pt-32"
     >
       {/* acid light source, top-left, dissolving into ink */}
       <div
@@ -93,7 +93,7 @@ export function Hero() {
             className="lg:mt-6"
           >
             <div className="rounded-lg border border-border bg-surface/70 p-3 backdrop-blur-sm">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-md">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-md md:aspect-[4/3]">
                 <motion.img
                   key={item.src}
                   src={item.src}
@@ -144,7 +144,7 @@ export function Hero() {
         initial={reduce ? false : { opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, delay: 0.5, ease: EASE }}
-        className="relative mt-auto w-full"
+        className="relative mt-auto w-full shrink-0"
         aria-hidden
       >
         <svg viewBox="0 0 1000 205" className="block w-full" preserveAspectRatio="xMidYMid meet">
