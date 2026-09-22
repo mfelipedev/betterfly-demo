@@ -1,6 +1,6 @@
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
-import { Reveal, RevealWords, SectionLabel } from "./Reveal";
+import { Reveal, ScrollWords, SectionLabel } from "./Reveal";
 
 export function Manifesto() {
   const ref = useRef<HTMLDivElement>(null);
