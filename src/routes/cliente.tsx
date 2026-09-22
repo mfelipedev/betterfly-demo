@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import logo from "@/assets/betterfly-logo.png.asset.json";
+import logo from "@/assets/betterfly-logo.png";
 
 export const Route = createFileRoute("/cliente")({
   head: () => ({
@@ -26,7 +26,7 @@ export const Route = createFileRoute("/cliente")({
 function ClientePage() {
   return (
     <main className="flex min-h-screen flex-col justify-between px-5 py-10 md:px-10">
-      <img src={logo.url} alt="Betterfly" width={1670} height={940} className="h-10 w-auto" />
+      <img src={logo} alt="Betterfly" width={1670} height={940} className="h-10 w-auto" />
 
       <div className="max-w-3xl py-16">
         <p className="label-xs">Portal Betterfly, em construção</p>

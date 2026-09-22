@@ -1,7 +1,7 @@
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { RevealWords } from "./Reveal";
-import mark from "@/assets/betterfly-mark.png.asset.json";
+import mark from "@/assets/betterfly-mark.png";
 
 export function CTA() {
   const ref = useRef<HTMLElement>(null);
@@ -20,7 +20,7 @@ export function CTA() {
         aria-hidden
       />
       <motion.img
-        src={mark.url}
+        src={mark}
         alt=""
         aria-hidden
         width={1254}

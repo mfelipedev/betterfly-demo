@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { useState } from "react";
-import logo from "@/assets/betterfly-logo-clean.png.asset.json";
+import logo from "@/assets/betterfly-logo-clean.png";
 
 const NAV = [
   { label: "Início", href: "#inicio" },
@@ -31,7 +31,7 @@ export function Header() {
       >
         <a href="#inicio" className="flex min-w-0 items-center" aria-label="Betterfly, início">
           <img
-            src={logo.url}
+            src={logo}
             alt="Betterfly"
             width={1003}
             height={464}

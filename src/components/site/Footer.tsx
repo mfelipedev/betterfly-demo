@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/betterfly-logo-clean.png.asset.json";
+import logo from "@/assets/betterfly-logo-clean.png";
 
 const LINKS = [
   { label: "Instagram", href: "https://instagram.com/betterfly" },
@@ -14,7 +14,7 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-[1fr_auto] md:items-start">
           <div>
             <img
-              src={logo.url}
+              src={logo}
               alt="Betterfly"
               width={1003}
               height={464}
