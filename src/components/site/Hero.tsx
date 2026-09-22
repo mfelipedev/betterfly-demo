@@ -39,7 +39,7 @@ export function Hero() {
       />
       <div className="pointer-events-none absolute inset-0 grid-lines opacity-[0.18]" aria-hidden />
 
-      <div className="relative mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-center px-5 py-4 md:px-10 md:py-6">
+      <div className="relative mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-center px-5 py-2 md:px-10 md:py-6">
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-20">
           {/* headline */}
           <div>
